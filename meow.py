@@ -10,7 +10,8 @@ import numpy as np
 from dotenv import load_dotenv
 from filelock import FileLock
 from groq import Groq
-from rdflib import Graph, RDFS, URIRef, Literal, OWL
+from rdflib import Graph, RDFS, URIRef, Literal
+from rdflib.namespace import SKOS, DC
 from sentence_transformers import SentenceTransformer
 
 load_dotenv()
@@ -18,17 +19,75 @@ load_dotenv()
 def get_args():
     parser = argparse.ArgumentParser(description="Ontology-RAG CLI")
     parser.add_argument("--ontology", default="ontology.ttl", help="Path to ontology file (.ttl)")
-    parser.add_argument("--index", default="ontology_index.pkl", help="Path to FAISS index pickle")
-    parser.add_argument("--log",   default="rag_log.jsonl",   help="Path to log file (jsonl)")
+    parser.add_argument("--index",    default="ontology_index.pkl", help="Path to FAISS index pickle")
+    parser.add_argument("--log",      default="rag_log.jsonl",     help="Path to log file (jsonl)")
     return parser.parse_args()
 
 ARGS = get_args()
-
-MODEL = SentenceTransformer("all-MiniLM-L6-v2")
-
 ONTOLOGY_FILE = Path(ARGS.ontology)
 INDEX_PATH     = Path(ARGS.index)
 LOG_PATH       = Path(ARGS.log)
+FILELOCK       = FileLock(str(LOG_PATH) + ".lock")
+
+MODEL = SentenceTransformer("all-MiniLM-L6-v2")
+groq_client = Groq()
+
+def pick_literal(literals, preferred_langs=("ru","en")):
+    by_lang = {lit.language: str(lit) for lit in literals if isinstance(lit, Literal)}
+    for lang in preferred_langs:
+        if lang in by_lang:
+            return by_lang[lang]
+    return next(iter(by_lang.values()), None)
+
+def load_facts_from_ontology(path: Path):
+    g = Graph()
+    if not path.exists():
+        raise FileNotFoundError(f"Ontology file '{path}' not found")
+    g.parse(path.as_posix(), format="turtle")
+
+    definition_props = [
+        URIRef("http://purl.obolibrary.org/obo/IAO_0000115"),
+        SKOS.definition,
+        DC.description,
+        RDFS.comment
+    ]
+
+    FACTS = []
+    for s in set(g.subjects(RDFS.label, None)):
+        labels = list(g.objects(s, RDFS.label))
+        label = pick_literal(labels)
+        if not label:
+            continue
+
+        defs = []
+        for prop in definition_props:
+            vals = list(g.objects(s, prop))
+            if vals:
+                defs = vals
+                break
+        definition = pick_literal(defs)
+        if not definition:
+            continue
+
+        try:
+            node_id = g.qname(s).split(":")[1]
+        except Exception:
+            node_id = str(s).split("/")[-1]
+        FACTS.append(f"{label} ({node_id}): {definition}")
+
+    subclass_facts = set()
+    for a in g.subjects(RDFS.subClassOf, None):
+        for b in g.transitive_objects(a, RDFS.subClassOf):
+            if a != b:
+                try:
+                    a_id = g.qname(a).split(":")[1]
+                    b_id = g.qname(b).split(":")[1]
+                except:
+                    a_id = str(a).split("/")[-1]
+                    b_id = str(b).split("/")[-1]
+                subclass_facts.add(f"{a_id} is a subclass of {b_id}")
+    FACTS.extend(sorted(subclass_facts))
+    return FACTS
 
 if INDEX_PATH.exists():
     with INDEX_PATH.open("rb") as f:
@@ -36,33 +95,9 @@ if INDEX_PATH.exists():
         FACTS      = data["facts"]
         EMBEDDINGS = data["embeddings"]
 else:
-    g = Graph()
-    if not ONTOLOGY_FILE.exists():
-        raise FileNotFoundError(f"Ontology file '{ONTOLOGY_FILE}' not found")
-    g.parse(ONTOLOGY_FILE, format="turtle")
-
-    definition_prop = URIRef("http://purl.obolibrary.org/obo/IAO_0000115")
-    fallback_prop   = RDFS.comment
-
-    FACTS = []
-    for s in g.subjects(RDFS.label, None):
-        label       = g.value(s, RDFS.label)
-        definition  = g.value(s, definition_prop) or g.value(s, fallback_prop)
-        if isinstance(label, Literal) and isinstance(definition, Literal):
-            node_id = str(s).split("/")[-1]
-            FACTS.append(f"{label} ({node_id}): {definition}")
-
-    subclass_facts = set()
-    for a, _, b in g.triples((None, RDFS.subClassOf, None)):
-        for _, _, c in g.triples((b, RDFS.subClassOf, None)):
-            if a != c:
-                subclass_facts.add(f"{a.split('#')[-1]} is a subclass of {c.split('#')[-1]}")
-
-    FACTS.extend(subclass_facts)
-
+    FACTS = load_facts_from_ontology(ONTOLOGY_FILE)
     EMBEDDINGS = MODEL.encode(FACTS, show_progress_bar=True, dtype="float32")
     faiss.normalize_L2(EMBEDDINGS)
-
     with INDEX_PATH.open("wb") as f:
         pickle.dump({"facts": FACTS, "embeddings": EMBEDDINGS}, f)
 
@@ -85,27 +120,23 @@ def parse_verdict(eval_text: str) -> str:
     }
     return mapping.get(first, "Unknown")
 
-FILELOCK = FileLock(str(LOG_PATH) + ".lock")
-
 def log_interaction(entry: dict):
     entry["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     with FILELOCK:
         with LOG_PATH.open("a", encoding="utf-8") as f:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
-groq_client = Groq()
-
 def ask_with_rag_groq(query: str, k: int = 5):
     context_facts, distances = retrieve_facts(query, k)
-    context = "\n".join(f"[{i+1}] {fact}" for i, fact in enumerate(context_facts)) + \
-              "\n\nCited facts list:\n" + \
-              "\n".join(f"[{i+1}] {fact}" for i, fact in enumerate(context_facts))
-
+    context = "\n".join(f"[{i+1}] {fact}" for i, fact in enumerate(context_facts))
     prompt = f"""
 You are a helpful assistant. Use the following ontology facts to answer the user's question.
-Always cite facts explicitly by referring to [1], [2], etc.
+When you refer to a fact, cite it inline using the notation “[n]”, where n is the number of fact listed below.
+At the end of your answer, include a “Citations” section that reproduces each cited fact in full, for example:
 
-Ontology facts:
+Citations:
+[1] <full text of citation number 1>
+[2] <full text of citation number 2>
 {context}
 
 User question:
@@ -113,7 +144,7 @@ User question:
 
 Answer (with citations and cited fact text):
 """
-    completion = groq_client.chat.completions.create(
+    resp = groq_client.chat.completions.create(
         model="llama-3.1-8b-instant",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.7,
@@ -121,10 +152,7 @@ Answer (with citations and cited fact text):
         top_p=1,
         stream=False,
     )
-    return completion.choices[0].message.content, distances
-
-
-
+    return resp.choices[0].message.content, distances
 
 def ask_without_rag_groq(query: str):
     prompt = f"""
@@ -132,7 +160,7 @@ You are a helpful assistant. Answer the following question concisely and factual
 
 {query}
 """
-    completion = groq_client.chat.completions.create(
+    resp = groq_client.chat.completions.create(
         model="llama-3.1-8b-instant",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.7,
@@ -140,7 +168,7 @@ You are a helpful assistant. Answer the following question concisely and factual
         top_p=1,
         stream=False,
     )
-    return completion.choices[0].message.content
+    return resp.choices[0].message.content
 
 def evaluate_answers_with_llm(question: str, answer_a: str, answer_b: str):
     prompt = f"""Вы — полезный оценщик. Сравните два ответа на один вопрос.
@@ -159,7 +187,7 @@ def evaluate_answers_with_llm(question: str, answer_a: str, answer_b: str):
 - «Ответ B лучше»
 - «Ответы равнозначны»
 Затем добавьте одну-две фразы пояснения."""
-    completion = groq_client.chat.completions.create(
+    resp = groq_client.chat.completions.create(
         model="llama-3.1-8b-instant",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.5,
@@ -167,7 +195,7 @@ def evaluate_answers_with_llm(question: str, answer_a: str, answer_b: str):
         top_p=1,
         stream=False,
     )
-    return completion.choices[0].message.content
+    return resp.choices[0].message.content
 
 def main():
     print("\U0001F9E0 Ask me something (type 'exit' to quit)")
@@ -189,7 +217,6 @@ def main():
         print(evaluation)
 
         verdict = parse_verdict(evaluation)
-
         log_interaction({
             "question": q,
             "answer_no_rag": answer_no_rag,
