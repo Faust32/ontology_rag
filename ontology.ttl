@@ -1708,8 +1708,6 @@ Source: https://en.wikipedia.org/wiki/Protocol_Buffers"""@en ,
                            rdfs:label "Protocol Buffers"@en ,
                                       "Protocol Buffers"@ru .
 
-['Website; Сайт:  (comp-langs#КомпьютерныйЯзык_Сайт)', 'Website; Сайт:  (comp-langs#КомпьютерныйЯзык_Сайт)', 'Description; Описание:  (comp-langs#КомпьютерныйЯзык_Описание)']
-[0.5711798071861267, 0.5711798071861267, 0.5617380738258362]
 
 ###  http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Python
 comp-langs:Python rdf:type owl:NamedIndividual ,
