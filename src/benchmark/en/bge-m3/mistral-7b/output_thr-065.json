@@ -1,0 +1,947 @@
+{
+  "summary": {
+    "n_cases": 37,
+    "language": "English",
+    "retrieval": {
+      "hit_rate": 0.838,
+      "precision_k": 0.821,
+      "recall_k": 0.764,
+      "mrr": 0.784
+    },
+    "generation": {
+      "exact_match": 0.423,
+      "adherence": 0.586,
+      "n_evaluated": 26
+    }
+  },
+  "elapsed_s": 78.89,
+  "cases": [
+    {
+      "query": "Who created Python and what is its translation mechanism?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": false,
+      "adherence": true,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Python"
+      ],
+      "answer": "Гвидо ван Россум создал Python. Механизм трансляции для Python — интерпретация программного кода.",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Python",
+            "matched_pattern": "Python"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "Who is the author of the Java language?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": true,
+      "adherence": false,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Java"
+      ],
+      "answer": "Джеймс Гослинг (James Gosling)",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Java",
+            "matched_pattern": "Java"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What is Haskell?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": false,
+      "adherence": false,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Haskell"
+      ],
+      "answer": "Haskell - это высокоуровневый язык программирования, созданный Аластером Ридом, Джоном Ланчбери, Джоном Хьюзом, Кевином Хаммонд, Леннартом Августссоном, Полом Худаком, Саймоном Пейтон-Джонсом, Томасом Юнссоном, Уорреном Бертоном, Филипом Уодлером и Эриком Мейером. Язык имеет статическую типизацию и применяет механизм трансляции компиляции программного кода. Haskell был впервые выпущен в 1990 году. Он является одним из самых распространенных языков программирования с поддержкой отложенных вычислений и имеет полную, сильную, статическую систему типов на основе системы типов Хиндли — Милнера. Язык назван в честь исследователя теории типов и изобретателя комбинаторной логики Хаскелла Карри. Haskell имеет средства взаимодействия с кодом на других языках программирования, а также поддержку многозадачного и параллельного программирования, развитый инструментарий для автоматического тестирования, отладки и профилирования, существует несколько тысяч библиотек с открытым исходным кодом. [1] [2]",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Haskell",
+            "matched_pattern": "Haskell"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What tasks is Prolog used for?",
+      "status": "below_threshold",
+      "hit": false,
+      "precision": 0.0,
+      "recall": 0.0,
+      "mrr": 0.0,
+      "exact_match": null,
+      "adherence": null,
+      "retrieved_uris": [],
+      "answer": null,
+      "match_details": {
+        "matches": [],
+        "unmatched_expected": [
+          "Prolog"
+        ],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "Who created LISP and in what year?",
+      "status": "below_threshold",
+      "hit": false,
+      "precision": 0.0,
+      "recall": 0.0,
+      "mrr": 0.0,
+      "exact_match": null,
+      "adherence": null,
+      "retrieved_uris": [],
+      "answer": null,
+      "match_details": {
+        "matches": [],
+        "unmatched_expected": [
+          "LISP"
+        ],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "Who developed the C language and when was it first released?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": true,
+      "adherence": false,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#C"
+      ],
+      "answer": "Деннис Ритчи создал язык C в 1972 году. [1]",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#C",
+            "matched_pattern": "C"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "Who created the Perl language?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": false,
+      "adherence": true,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Perl"
+      ],
+      "answer": "Ларри Уолл был создателем языка Perl.",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Perl",
+            "matched_pattern": "Perl"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What is BASIC and for whom was it created?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": false,
+      "adherence": false,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#BASIC"
+      ],
+      "answer": "Бейсик (BASIC) — это высокоуровневый язык программирования, созданный Джоном Джорджем Кемени и Томасом Курцем. Он был разработан как инструмент для помощи студентам-непрограммистам в самостоятельной разработке компьютерных программ для решения своих задач [1].",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#BASIC",
+            "matched_pattern": "BASIC"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What is SQL?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": false,
+      "adherence": true,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#SQL",
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#PL/SQL"
+      ],
+      "answer": "SQL (Structured Query Language) - это язык запросов данных, предназначенный для создания, модификации и управления данными в реляционной базе данных. Он был создан Дональдом Чемберлином и Рэймондом Бойсом в 1974 году [1]. PL/SQL (Procedural Language / Structured Query Language) - процедурное расширение языка SQL, разработанное корпорацией Oracle. PL/SQL базируется на языке Ада и был впервые выпущен в 1992 году [2]. SQL имеет диалекты MySQL, PostgreSQL, SQLite, PL/SQL и другие [1].",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#SQL",
+            "matched_pattern": "SQL"
+          },
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#PL/SQL",
+            "matched_pattern": "SQL"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What sublanguages are part of SQL?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 0.2,
+      "mrr": 1.0,
+      "exact_match": null,
+      "adherence": false,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#SQL"
+      ],
+      "answer": "В SQL присутствуют следующие диалекты: MySQL, PostgreSQL, SQLite, PL/SQL. Кроме того, в контексте упоминается TCL, но в списке диалектов оно не включено [1]. Источник: https://ru.wikipedia.org/wiki/SQL",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#SQL",
+            "matched_pattern": "SQL"
+          }
+        ],
+        "unmatched_expected": [
+          "DDL",
+          "DML",
+          "DCL",
+          "TCL"
+        ],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "Who created PostgreSQL?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": false,
+      "adherence": false,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#PostgreSQL"
+      ],
+      "answer": "Michael Stonebreaker был создателем PostgreSQL. [1]",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#PostgreSQL",
+            "matched_pattern": "PostgreSQL"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What is the Cypher language used for?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": true,
+      "adherence": true,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Cypher"
+      ],
+      "answer": "The Cypher language is used for querying graphs, focusing on how data entities are connected and related to each other. It was developed with considerations of SQL's power and capabilities but based on components and needs of a database built on graph theory concepts. [1]",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Cypher",
+            "matched_pattern": "Cypher"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What is SPARQL?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": true,
+      "adherence": true,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#SPARQL"
+      ],
+      "answer": "СPARQL — это язык запросов для данных, представленных по модели RDF, а также протокол для передачи этих запросов и ответов на них. Он является рекомендацией консорциума W3C и одной из технологий семантической паутины.",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#SPARQL",
+            "matched_pattern": "SPARQL"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What is JQL and for which system is it designed?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 0.5,
+      "mrr": 1.0,
+      "exact_match": true,
+      "adherence": false,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#JQL"
+      ],
+      "answer": "JQL (Jira Query Language) является языком запросов, который был создан для системы Jira. [1]",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#JQL",
+            "matched_pattern": "JQL"
+          }
+        ],
+        "unmatched_expected": [
+          "Jira"
+        ],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "Who is the author of the JSON format?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": false,
+      "adherence": true,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#JSON"
+      ],
+      "answer": "Дуглас Крокфорд - [1]",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#JSON",
+            "matched_pattern": "JSON"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "Based on which languages was YAML created?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 0.3333333333333333,
+      "mrr": 1.0,
+      "exact_match": null,
+      "adherence": false,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#YAML"
+      ],
+      "answer": "YAML был создан на основе JSON и XML. [1]",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#YAML",
+            "matched_pattern": "YAML"
+          }
+        ],
+        "unmatched_expected": [
+          "JSON",
+          "XML"
+        ],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What is BSON?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": true,
+      "adherence": true,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#BSON"
+      ],
+      "answer": "BSON (Binary JavaScript Object Notation) - это формат обмена цифровыми данными, представляющий простые структуры данных и ассоциативные массивы. Является надмножеством JSON, включая дополнительно регулярные выражения, двоичные данные и даты. Был создан MongoDB Company в 2009 году [1].\n\nИсточник: https://ru.wikipedia.org/wiki/BSON",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#BSON",
+            "matched_pattern": "BSON"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What is CSV used for?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": false,
+      "adherence": true,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Excel-StyleCSV",
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#CSV"
+      ],
+      "answer": "CSV (Comma-Separated Values) используется для представления табличных данных, где строка таблицы соответствует строке текста, которая содержит одно или несколько полей, разделенных запятыми.",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Excel-StyleCSV",
+            "matched_pattern": "CSV"
+          },
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#CSV",
+            "matched_pattern": "CSV"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "Who developed Protocol Buffers?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": true,
+      "adherence": false,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ProtocolBuffers"
+      ],
+      "answer": "Protocol Buffers были созданы Google. [1]",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ProtocolBuffers",
+            "matched_pattern": "ProtocolBuffers"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What is TOML and what is it used for?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": false,
+      "adherence": true,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#TOML"
+      ],
+      "answer": "TOML (Tom's Obvious, Minimal Language) - это язык описания данных, созданный Томом Престон-Вернером. Он используется для обеспечения человекочитаемости и однозначного преобразования в ассоциативный массив. TOML похож на INI-файлы и используется в ряде программных продуктов, поддержка которого реализована в большом количестве языков программирования.\n[1] https://ru.wikipedia.org/wiki/TOML",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#TOML",
+            "matched_pattern": "TOML"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "For which technologies is Avro used?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": false,
+      "adherence": true,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Avro"
+      ],
+      "answer": "Avro is used for efficient storage and transfer of data between various systems, particularly in distributed computations such as Hadoop, Kafka, and other Big Data technologies. [1]",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Avro",
+            "matched_pattern": "Avro"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "Who created LaTeX and what is it used for?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": false,
+      "adherence": true,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#LaTeX",
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#TeX"
+      ],
+      "answer": "Латекс был создан Лесли Лэмпортом. Он используется для набора сложных документов, в частности, в академических кругах, особенно среди математиков и физиков. [1]",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#LaTeX",
+            "matched_pattern": "LaTeX"
+          },
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#TeX",
+            "matched_pattern": "LaTeX"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What is TeX?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": false,
+      "adherence": false,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#TeX",
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#LaTeX",
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#XeTeX"
+      ],
+      "answer": "Текст (Tex) - это процедурный язык разметки данных, созданный Дональдом Кнутом в 1978 году. Он используется для вёрстки документов и популярен в академических кругах, особенно среди математиков и физиков. LaTeX и XeTeX являются диалектами TeX'а. [1]",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#TeX",
+            "matched_pattern": "TeX"
+          },
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#LaTeX",
+            "matched_pattern": "TeX"
+          },
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#XeTeX",
+            "matched_pattern": "TeX"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "Which organization developed XML?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": false,
+      "adherence": true,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#XML"
+      ],
+      "answer": "Консорциум Всемирной паутины (W3C)",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#XML",
+            "matched_pattern": "XML"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What is HTML?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": true,
+      "adherence": true,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#HTML"
+      ],
+      "answer": "HTML (HyperText Markup Language) - это стандартизированный язык гипертекстовой разметки документов для просмотра веб-страниц в браузере. Он был создан Web Hypertext Application Technology Working Group и Консорциумом Всемирной паутины, а первый выпуск состоялся в 1993 году [1]. HTML предоставляет средства для создания заголовков, абзацев, списков, ссылок, цитат и других элементов. Элементы HTML выделяются тегами, записанными с использованием угловых скобок [1].",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#HTML",
+            "matched_pattern": "HTML"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What is RDF and how does it represent data?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": false,
+      "adherence": true,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#RDF",
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#RDFa",
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#RDF/JSON",
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#RDF/XML"
+      ],
+      "answer": "RDF (Resource Description Framework) - это компьютерный язык, предназначенный для представления утверждений о ресурсах в форме, пригодной для машинной обработки. Он является частью концепции семантической паутины. В RDF данные представлены в виде троек «субъект — предикат — объект», называемых триплетами. Для обозначения субъектов, отношений и объектов в RDF используются URI. Множество RDF-утверждений образует ориентированный граф, в котором вершинами являются субъекты и объекты, а рёбра отображают отношения.\n\nИсточник: https://ru.wikipedia.org/wiki/Resource_Description_Framework",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#RDF",
+            "matched_pattern": "RDF"
+          },
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#RDFa",
+            "matched_pattern": "RDF"
+          },
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#RDF/JSON",
+            "matched_pattern": "RDF"
+          },
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#RDF/XML",
+            "matched_pattern": "RDF"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What is ePub?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": true,
+      "adherence": true,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ePub"
+      ],
+      "answer": "Electronic Publication (ePub) - это компьютерный язык, разработанный International Digital Publishing Forum, который позволяет издателям производить и распространять цифровые публикации в одном файле, обеспечивая совместимость между программным и аппаратным обеспечением для воспроизведения цифровых книг и других публикаций с плавающей вёрсткой. [1]",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ePub",
+            "matched_pattern": "ePub"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What diagram types are included in UML?",
+      "status": "ok",
+      "hit": true,
+      "precision": 0.375,
+      "recall": 0.75,
+      "mrr": 1.0,
+      "exact_match": null,
+      "adherence": false,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#UML-диаграмма",
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДиаграммаОбъектов",
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДиаграммаКлассов",
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДиаграммаПоследовательности",
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Use-caseДиаграмма",
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДиаграммаКомпонентов",
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДиаграммаПакетов",
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДиаграммаДеятельности"
+      ],
+      "answer": "УML включает в себя Use-case диаграмму, Диаграмму классов, Диаграмму объектов, Диаграмму последовательности, Диаграмму компонентов, Диаграмму пакетов и Диаграмму деятельности.",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#UML-диаграмма",
+            "matched_pattern": "UML"
+          },
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДиаграммаКлассов",
+            "matched_pattern": "ДиаграммаКлассов"
+          },
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДиаграммаПоследовательности",
+            "matched_pattern": "ДиаграммаПоследовательности"
+          }
+        ],
+        "unmatched_expected": [
+          "UML-диаграмма"
+        ],
+        "unmatched_retrieved": [
+          "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДиаграммаОбъектов",
+          "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Use-caseДиаграмма",
+          "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДиаграммаКомпонентов",
+          "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДиаграммаПакетов",
+          "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДиаграммаДеятельности"
+        ]
+      }
+    },
+    {
+      "query": "What is DOT and which tool is it associated with?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 0.5,
+      "mrr": 1.0,
+      "exact_match": true,
+      "adherence": true,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#DOT"
+      ],
+      "answer": "DOT является языком описания графов, разработанным в рамках проекта Graphviz [1]. Этот язык обычно хранится в виде файлов с расширением .gv или .dot. Самая основная программа для обработки файлов DOT в пакете Graphviz называется dot [1].\n\nИсточник: https://en.wikipedia.org/wiki/DOT_(graph_description_language)",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#DOT",
+            "matched_pattern": "DOT"
+          }
+        ],
+        "unmatched_expected": [
+          "Graphviz"
+        ],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What is the functional programming paradigm?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": false,
+      "adherence": true,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ФункциональнаяПарадигмаПрограммирования"
+      ],
+      "answer": "Функциональная парадигма программирования трактуется как вычисление значений математических функций. Это дополнительная парадигма для Java, Perl, Python и C++, а основной для Haskell и LISP.",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ФункциональнаяПарадигмаПрограммирования",
+            "matched_pattern": "ФункциональнаяПарадигмаПрограммирования"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What is the logical programming paradigm?",
+      "status": "ok",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 1.0,
+      "exact_match": true,
+      "adherence": false,
+      "retrieved_uris": [
+        "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ЛогическаяПарадигмаПрограммирования"
+      ],
+      "answer": "The Logical Programming Paradigm is a type of programming paradigm that is based on logic theory. It is the primary paradigm for Prolog and an additional paradigm for Python. [1]",
+      "match_details": {
+        "matches": [
+          {
+            "uri": "http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ЛогическаяПарадигмаПрограммирования",
+            "matched_pattern": "ЛогическаяПарадигмаПрограммирования"
+          }
+        ],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "Who created MASM?",
+      "status": "below_threshold",
+      "hit": false,
+      "precision": 0.0,
+      "recall": 0.0,
+      "mrr": 0.0,
+      "exact_match": null,
+      "adherence": null,
+      "retrieved_uris": [],
+      "answer": null,
+      "match_details": {
+        "matches": [],
+        "unmatched_expected": [
+          "MASM"
+        ],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "Which languages use interpretation instead of compilation?",
+      "status": "below_threshold",
+      "hit": false,
+      "precision": 0.0,
+      "recall": 0.0,
+      "mrr": 0.0,
+      "exact_match": null,
+      "adherence": null,
+      "retrieved_uris": [],
+      "answer": null,
+      "match_details": {
+        "matches": [],
+        "unmatched_expected": [
+          "Python",
+          "LISP",
+          "Prolog",
+          "Perl"
+        ],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "Name programming languages with code compilation.",
+      "status": "below_threshold",
+      "hit": false,
+      "precision": 0.0,
+      "recall": 0.0,
+      "mrr": 0.0,
+      "exact_match": null,
+      "adherence": null,
+      "retrieved_uris": [],
+      "answer": null,
+      "match_details": {
+        "matches": [],
+        "unmatched_expected": [
+          "Java",
+          "C",
+          "Haskell"
+        ],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What SQL dialects exist?",
+      "status": "below_threshold",
+      "hit": false,
+      "precision": 0.0,
+      "recall": 0.0,
+      "mrr": 0.0,
+      "exact_match": null,
+      "adherence": null,
+      "retrieved_uris": [],
+      "answer": null,
+      "match_details": {
+        "matches": [],
+        "unmatched_expected": [
+          "SQL",
+          "MySQL",
+          "PostgreSQL",
+          "SQLite"
+        ],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What is the Rust programming language?",
+      "status": "below_threshold",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 0.0,
+      "exact_match": null,
+      "adherence": null,
+      "retrieved_uris": [],
+      "answer": null,
+      "match_details": {
+        "matches": [],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    },
+    {
+      "query": "What is the capital of France?",
+      "status": "below_threshold",
+      "hit": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "mrr": 0.0,
+      "exact_match": null,
+      "adherence": null,
+      "retrieved_uris": [],
+      "answer": null,
+      "match_details": {
+        "matches": [],
+        "unmatched_expected": [],
+        "unmatched_retrieved": []
+      }
+    }
+  ]
+}

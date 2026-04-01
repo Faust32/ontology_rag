@@ -1,0 +1,231 @@
+/Users/i.a.babushkin/PycharmProjects/pythonProject/.venv/bin/python /Users/i.a.babushkin/PycharmProjects/ontology_rag/src/main/eval.py --llm-model phi4-mini:latest --embed-model bge-m3
+🔧 Инициализация системы…
+⏳ Кейс 1/37: 'Кто создал Python и какой у него механизм трансляц'
+❌ [below_threshold] 'Кто создал Python и какой у него механизм трансляции?'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['Python']
+   ├─ Retrieved URIs (normalized):
+   ├─ Manual match check:
+   │  Pattern 'Python':
+⏳ Кейс 2/37: 'Кто является автором языка Java?'
+✅ [ok] 'Кто является автором языка Java?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'гослинг' (lower: 'гослинг')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Джеймс Гослинг. [1]...'
+⏳ Кейс 3/37: 'Что такое Haskell?'
+✅ [ok] 'Что такое Haskell?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'функциональн' (lower: 'функциональн')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Haskell — это высокоуровневый, статически типизированный, чисто функциональный язык программирования общего назначения с системой типов Хиндли-Милнера. Он был создан несколькими людьми: Аластер Рид, Д...'
+⏳ Кейс 4/37: 'Для каких задач используется Prolog?'
+❌ [below_threshold] 'Для каких задач используется Prolog?'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['Prolog']
+   ├─ Retrieved URIs (normalized):
+   ├─ Manual match check:
+   │  Pattern 'Prolog':
+⏳ Кейс 5/37: 'Кто создал LISP и в каком году?'
+✅ [ok] 'Кто создал LISP и в каком году?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'маккарти' (lower: 'маккарти')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Джон Маккарти; 1958....'
+⏳ Кейс 6/37: 'Кто разработал язык C и когда он был впервые выпущ'
+✅ [ok] 'Кто разработал язык C и когда он был впервые выпущен?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: '1972' (lower: '1972')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Дени Ритчи разработал язык C, который был впервые выпущен в 1972 году....'
+⏳ Кейс 7/37: 'Кто создал язык Perl?'
+✅ [ok] 'Кто создал язык Perl?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'ларри уолл' (lower: 'ларри уолл')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Ларри Уолл [1]...'
+⏳ Кейс 8/37: 'Что такое BASIC и для кого он создавался?'
+✅ [ok] 'Что такое BASIC и для кого он создавался?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'начинающ' (lower: 'начинающ')
+   ├─ Found in answer: False
+   └─ Answer preview: 'BASIC — это высокоуровневый язык программирования, язык программирования, компьютерный язык. Был создан Джоном Гордоном Кемени и Томасом Курцем в 1964 году [1]. Он был разработан как инструмент для то...'
+⏳ Кейс 9/37: 'Что такое SQL?'
+✅ [ok] 'Что такое SQL?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'реляционн' (lower: 'реляционн')
+   ├─ Found in answer: True
+   └─ Answer preview: 'SQL (Structured Query Language) — язык запросов к реляционной базе данных, используемый для создания, модификации и управления данными в таких базах. Он был создан Дональдом Чемберлином и Рэймондом Бо...'
+⏳ Кейс 10/37: 'Какие подъязыки входят в состав SQL?'
+✅ [ok] 'Какие подъязыки входят в состав SQL?'
+⏳ Кейс 11/37: 'Кто создал PostgreSQL?'
+✅ [ok] 'Кто создал PostgreSQL?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'стоунбрейкер' (lower: 'стоунбрейкер')
+   ├─ Found in answer: True
+   └─ Answer preview: 'PostgreSQL Global Development Group. Майкл Стоунбрейкер. [1]...'
+⏳ Кейс 12/37: 'Для чего используется язык Cypher?'
+✅ [ok] 'Для чего используется язык Cypher?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'граф' (lower: 'граф')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Язык использован для выполнения запросов к данным в графовых базах данных, особенно с Neo4j [1]....'
+⏳ Кейс 13/37: 'Что такое SPARQL?'
+✅ [ok] 'Что такое SPARQL?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'rdf' (lower: 'rdf')
+   ├─ Found in answer: True
+   └─ Answer preview: 'SPARQL — язык запросов для графовых баз данных и Semantic Web, предназначенный для работы с данными в формате RDF. Он был создан консорциумом Всемирной паутины (W3C) [1]. SPARQL позволяет выполнять за...'
+⏳ Кейс 14/37: 'Что такое JQL и для какой системы он предназначен?'
+✅ [ok] 'Что такое JQL и для какой системы он предназначен?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'jira' (lower: 'jira')
+   ├─ Found in answer: True
+   └─ Answer preview: 'JQL — это Язык запросов Jira, предназначенный для расширенного поиска в системе Jira [1]....'
+⏳ Кейс 15/37: 'Кто является автором формата JSON?'
+✅ [ok] 'Кто является автором формата JSON?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'крокфорд' (lower: 'крокфорд')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Дуглас Крокфорд. [1]...'
+⏳ Кейс 16/37: 'На основе каких языков создан YAML?'
+✅ [ok] 'На основе каких языков создан YAML?'
+⏳ Кейс 17/37: 'Что такое BSON?'
+✅ [ok] 'Что такое BSON?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'бинарн' (lower: 'бинарн')
+   ├─ Found in answer: True
+   └─ Answer preview: 'BSON (Binary JavaScript Object Notation) — это формат сериализации бинарных данных, который является расширением JSON. Он включает дополнительные типы данных, такие как регулярные выражения, двоичные ...'
+⏳ Кейс 18/37: 'Для чего используется CSV?'
+❌ [below_threshold] 'Для чего используется CSV?'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['CSV']
+   ├─ Retrieved URIs (normalized):
+   ├─ Manual match check:
+   │  Pattern 'CSV':
+⏳ Кейс 19/37: 'Кто разработал Protocol Buffers?'
+✅ [ok] 'Кто разработал Protocol Buffers?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'google' (lower: 'google')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Google...'
+⏳ Кейс 20/37: 'Что такое TOML и для чего он используется?'
+✅ [ok] 'Что такое TOML и для чего он используется?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'конфигурац' (lower: 'конфигурац')
+   ├─ Found in answer: True
+   └─ Answer preview: 'TOML (Том Престон-Вернер) — язык описания данных, спроектированный для обеспечения человекочитаемости с одной стороны и однозначного преобразования в ассоциативный массив с другой. Спецификация языка ...'
+⏳ Кейс 21/37: 'Для каких технологий используется Avro?'
+✅ [ok] 'Для каких технологий используется Avro?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'apache' (lower: 'apache')
+   ├─ Found in answer: False
+   └─ Answer preview: 'Распределённые вычисления, такие как Hadoop, Kafka и другие технологии Big Data [1]....'
+⏳ Кейс 22/37: 'Кто создал LaTeX и для чего он используется?'
+✅ [ok] 'Кто создал LaTeX и для чего он используется?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'лэмпорт' (lower: 'лэмпорт')
+   ├─ Found in answer: True
+   └─ Answer preview: 'LaTeX был создан Лесли Лэмпортом. Он используется как Описательный язык разметки данных, Язык разметки данных, Компьютерный язык, Процедурный язык разметки данных для создания сложных документов, особ...'
+⏳ Кейс 23/37: 'Что такое TeX?'
+✅ [ok] 'Что такое TeX?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'кнут' (lower: 'кнут')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Процессор разметки данных, язык разметки данных и компьютерный язык для создания типографских документов. Был создан Дональдом Кнутом в 1978 году [1]....'
+⏳ Кейс 24/37: 'Какая организация разработала XML?'
+✅ [ok] 'Какая организация разработала XML?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'консорциум' (lower: 'консорциум')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Консорциум Всемирной паутины (W3C) [1]...'
+⏳ Кейс 25/37: 'Что такое HTML?'
+✅ [ok] 'Что такое HTML?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'разметк' (lower: 'разметк')
+   ├─ Found in answer: True
+   └─ Answer preview: 'HTML (HyperText Markup Language) — это язык разметки данных, используемый для создания и форматирования веб-страниц. Он был разработан Web Hypertext Application Technology Working Group в 1993 году [1...'
+⏳ Кейс 26/37: 'Что такое RDF и как он представляет данные?'
+✅ [ok] 'Что такое RDF и как он представляет данные?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'триплет' (lower: 'триплет')
+   ├─ Found in answer: True
+   └─ Answer preview: 'RDF — это аббревиатура от Resource Description Framework, который является стандартом для представления данных в виде графа. Он используется для описания ресурсов на интернете и позволяет представлять...'
+⏳ Кейс 27/37: 'Что такое ePub?'
+✅ [ok] 'Что такое ePub?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'электронн' (lower: 'электронн')
+   ├─ Found in answer: False
+   └─ Answer preview: 'ePub — это компьютерный язык, позволяющий издателям производить и распространять цифровую публикацию в одном файле, обеспечивая совместимость между программным и аппаратным обеспечением для воспроизве...'
+⏳ Кейс 28/37: 'Какие типы диаграмм входят в UML?'
+✅ [ok] 'Какие типы диаграмм входят в UML?'
+⏳ Кейс 29/37: 'Что такое DOT и с каким инструментом он связан?'
+✅ [ok] 'Что такое DOT и с каким инструментом он связан?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'graphviz' (lower: 'graphviz')
+   ├─ Found in answer: True
+   └─ Answer preview: 'DOT — это язык описания графов, разработанный в рамках проекта Graphviz. Он связан со специализированным программным обеспечением для обработки файлов DOT под названием Graphviz [1]....'
+⏳ Кейс 30/37: 'Что такое функциональная парадигма программировани'
+✅ [ok] 'Что такое функциональная парадигма программирования?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'функц' (lower: 'функц')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Функциональная парадигма программирования — это парадигма, в которой вычисление трактуется как вычисление значений математических функций, где программы представляют собой набор функций и переменные д...'
+⏳ Кейс 31/37: 'Что такое логическая парадигма программирования?'
+✅ [ok] 'Что такое логическая парадигма программирования?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'логическ' (lower: 'логическ')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Логическая парадигма программирования — это дополнительная парадигма для Python, основанная на теории логики и являющаяся основной парадигмой для Prolog. Она использует декларативную парадигму програм...'
+⏳ Кейс 32/37: 'Кто создал MASM?'
+❌ [below_threshold] 'Кто создал MASM?'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['MASM']
+   ├─ Retrieved URIs (normalized):
+   ├─ Manual match check:
+   │  Pattern 'MASM':
+⏳ Кейс 33/37: 'Какие языки используют интерпретацию вместо компил'
+❌ [below_threshold] 'Какие языки используют интерпретацию вместо компиляции?'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['Python', 'LISP', 'Prolog', 'Perl']
+   ├─ Retrieved URIs (normalized):
+   ├─ Manual match check:
+   │  Pattern 'Python':
+   │  Pattern 'LISP':
+   │  Pattern 'Prolog':
+   │  Pattern 'Perl':
+⏳ Кейс 34/37: 'Назови языки программирования с компиляцией кода.'
+❌ [below_threshold] 'Назови языки программирования с компиляцией кода.'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['Java', 'C', 'Haskell']
+   ├─ Retrieved URIs (normalized):
+   ├─ Manual match check:
+   │  Pattern 'Java':
+   │  Pattern 'C':
+   │  Pattern 'Haskell':
+⏳ Кейс 35/37: 'Какие существуют диалекты SQL?'
+✅ [ok] 'Какие существуют диалекты SQL?'
+⏳ Кейс 36/37: 'Что такое язык программирования Rust?'
+✅ [below_threshold] 'Что такое язык программирования Rust?'
+⏳ Кейс 37/37: 'Какая столица у Франции?'
+✅ [below_threshold] 'Какая столица у Франции?'
+
+============================================================
+📊  ИТОГИ ОЦЕНКИ
+============================================================
+Кейсов             : 37
+
+── Retrieval ──────────────────────────
+  Hit Rate@k       : 0.838
+  Precision@k      : 0.821
+  Recall@k         : 0.744
+  MRR              : 0.784
+
+── Generation (25 кейсов) ──────────────
+  Exact Match      : 0.880
+  Adherence        : 0.393
+
+⏱️  Время           : 39.0с
+============================================================
+
+Process finished with exit code 0

@@ -12,7 +12,10 @@ eval.py — Оценка качества RAG-системы на онтолог
     - Adherence       — все слова ответа встречаются в retrieved-контексте
 
 Использование:
-    python eval.py                          # стандартный прогон
+    python eval.py                          # стандартный прогон (русский)
+    python eval.py --language en            # только английские кейсы
+    python eval.py --language ru            # только русские кейсы
+    python eval.py --language both          # оба языка (ru + en)
     python eval.py --top-k 5               # кастомный k
     python eval.py --skip-generation       # только retrieval, без LLM
     python eval.py --verbose               # подробный вывод по каждому вопросу
@@ -29,10 +32,10 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 # ---------------------------------------------------------------------------
-# Тестовые кейсы
+# Тестовые кейсы — РУССКИЙ ЯЗЫК
 # ---------------------------------------------------------------------------
 
-TEST_CASES = [
+TEST_CASES_RU = [
     {
         "query": "Кто создал Python и какой у него механизм трансляции?",
         "expected_uris": ["Python"],
@@ -220,6 +223,198 @@ TEST_CASES = [
     },
 ]
 
+# ---------------------------------------------------------------------------
+# Тестовые кейсы — АНГЛИЙСКИЙ ЯЗЫК
+# ---------------------------------------------------------------------------
+
+TEST_CASES_EN = [
+    {
+        "query": "Who created Python and what is its translation mechanism?",
+        "expected_uris": ["Python"],
+        "expected_answer": "interpret",
+    },
+    {
+        "query": "Who is the author of the Java language?",
+        "expected_uris": ["Java"],
+        "expected_answer": "gosling",
+    },
+    {
+        "query": "What is Haskell?",
+        "expected_uris": ["Haskell"],
+        "expected_answer": "functional",
+    },
+    {
+        "query": "What tasks is Prolog used for?",
+        "expected_uris": ["Prolog"],
+        "expected_answer": "artificial",
+    },
+    {
+        "query": "Who created LISP and in what year?",
+        "expected_uris": ["LISP"],
+        "expected_answer": "mccarthy",
+    },
+    {
+        "query": "Who developed the C language and when was it first released?",
+        "expected_uris": ["C"],
+        "expected_answer": "1972",
+    },
+    {
+        "query": "Who created the Perl language?",
+        "expected_uris": ["Perl"],
+        "expected_answer": "larry wall",
+    },
+    {
+        "query": "What is BASIC and for whom was it created?",
+        "expected_uris": ["BASIC"],
+        "expected_answer": "beginner",
+    },
+    {
+        "query": "What is SQL?",
+        "expected_uris": ["SQL"],
+        "expected_answer": "relational",
+    },
+    {
+        "query": "What sublanguages are part of SQL?",
+        "expected_uris": ["SQL", "DDL", "DML", "DCL", "TCL"],
+        "expected_answer": None,
+    },
+    {
+        "query": "Who created PostgreSQL?",
+        "expected_uris": ["PostgreSQL"],
+        "expected_answer": "stonebraker",
+    },
+    {
+        "query": "What is the Cypher language used for?",
+        "expected_uris": ["Cypher"],
+        "expected_answer": "graph",
+    },
+    {
+        "query": "What is SPARQL?",
+        "expected_uris": ["SPARQL"],
+        "expected_answer": "rdf",
+    },
+    {
+        "query": "What is JQL and for which system is it designed?",
+        "expected_uris": ["JQL", "Jira"],
+        "expected_answer": "jira",
+    },
+    {
+        "query": "Who is the author of the JSON format?",
+        "expected_uris": ["JSON"],
+        "expected_answer": "crockford",
+    },
+    {
+        "query": "Based on which languages was YAML created?",
+        "expected_uris": ["YAML", "JSON", "XML"],
+        "expected_answer": None,
+    },
+    {
+        "query": "What is BSON?",
+        "expected_uris": ["BSON"],
+        "expected_answer": "binary",
+    },
+    {
+        "query": "What is CSV used for?",
+        "expected_uris": ["CSV"],
+        "expected_answer": "tabular",
+    },
+    {
+        "query": "Who developed Protocol Buffers?",
+        "expected_uris": ["ProtocolBuffers"],
+        "expected_answer": "google",
+    },
+    {
+        "query": "What is TOML and what is it used for?",
+        "expected_uris": ["TOML"],
+        "expected_answer": "configur",
+    },
+    {
+        "query": "For which technologies is Avro used?",
+        "expected_uris": ["Avro"],
+        "expected_answer": "apache",
+    },
+    {
+        "query": "Who created LaTeX and what is it used for?",
+        "expected_uris": ["LaTeX"],
+        "expected_answer": "lamport",
+    },
+    {
+        "query": "What is TeX?",
+        "expected_uris": ["TeX"],
+        "expected_answer": "knuth",
+    },
+    {
+        "query": "Which organization developed XML?",
+        "expected_uris": ["XML"],
+        "expected_answer": "consortium",
+    },
+    {
+        "query": "What is HTML?",
+        "expected_uris": ["HTML"],
+        "expected_answer": "markup",
+    },
+    {
+        "query": "What is RDF and how does it represent data?",
+        "expected_uris": ["RDF"],
+        "expected_answer": "triplet",
+    },
+    {
+        "query": "What is ePub?",
+        "expected_uris": ["ePub"],
+        "expected_answer": "electronic",
+    },
+    {
+        "query": "What diagram types are included in UML?",
+        "expected_uris": ["UML", "ДиаграммаКлассов", "ДиаграммаПоследовательности", "UML-диаграмма"],
+        "expected_answer": None,
+    },
+    {
+        "query": "What is DOT and which tool is it associated with?",
+        "expected_uris": ["DOT", "Graphviz"],
+        "expected_answer": "graphviz",
+    },
+    {
+        "query": "What is the functional programming paradigm?",
+        "expected_uris": ["ФункциональнаяПарадигмаПрограммирования"],
+        "expected_answer": "funct",
+    },
+    {
+        "query": "What is the logical programming paradigm?",
+        "expected_uris": ["ЛогическаяПарадигмаПрограммирования"],
+        "expected_answer": "logic",
+    },
+    {
+        "query": "Who created MASM?",
+        "expected_uris": ["MASM"],
+        "expected_answer": "microsoft",
+    },
+    {
+        "query": "Which languages use interpretation instead of compilation?",
+        "expected_uris": ["Python", "LISP", "Prolog", "Perl"],
+        "expected_answer": None,
+    },
+    {
+        "query": "Name programming languages with code compilation.",
+        "expected_uris": ["Java", "C", "Haskell"],
+        "expected_answer": None,
+    },
+    {
+        "query": "What SQL dialects exist?",
+        "expected_uris": ["SQL", "MySQL", "PostgreSQL", "SQLite"],
+        "expected_answer": None,
+    },
+    {
+        "query": "What is the Rust programming language?",
+        "expected_uris": [],
+        "expected_answer": None,
+    },
+    {
+        "query": "What is the capital of France?",
+        "expected_uris": [],
+        "expected_answer": None,
+    },
+]
+
 
 # ---------------------------------------------------------------------------
 # Вспомогательные структуры
@@ -375,7 +570,7 @@ def compute_generation_metrics(result: CaseResult) -> None:
 # Агрегация
 # ---------------------------------------------------------------------------
 
-def aggregate(results: List[CaseResult]) -> Dict:
+def aggregate(results: List[CaseResult], language: str) -> Dict:
     def _mean(values):
         v = [x for x in values if x is not None]
         return sum(v) / len(v) if v else None
@@ -391,6 +586,7 @@ def aggregate(results: List[CaseResult]) -> Dict:
 
     return {
         "n_cases": n,
+        "language": language,
         "retrieval": {
             "hit_rate": round(hit_rate, 3),
             "precision_k": round(precision, 3) if precision is not None else None,
@@ -498,6 +694,8 @@ def print_summary(agg: Dict, elapsed: float) -> None:
     print("=" * 60)
     r = agg["retrieval"]
     g = agg["generation"]
+    lang_label = agg.get("language", "unknown")
+    print(f"Язык               : {lang_label}")
     print(f"Кейсов             : {agg['n_cases']}")
     print(f"\n── Retrieval ──────────────────────────")
     print(f"  Hit Rate@k       : {r['hit_rate']:.3f}")
@@ -519,11 +717,14 @@ def parse_eval_args() -> argparse.Namespace:
     """Парсер аргументов специфичных для eval.py."""
     parser = argparse.ArgumentParser(
         description="Evaluation скрипт для Ontology RAG",
-        # Важно: не падать на неизвестных аргументах (они пойдут в Config)
-        allow_abbrev=False
+        allow_abbrev=False,
+        add_help=False
     )
     parser.add_argument("--top-k", type=int, default=8,
                         help="Количество retrieved сущностей (default: 8)")
+    parser.add_argument("--language", "-l", type=str, default="ru",
+                        choices=["ru", "en", "both"],
+                        help="Язык тестовых кейсов: ru, en или both (default: ru)")
     parser.add_argument("--skip-generation", action="store_true",
                         help="Пропустить генерацию LLM, только retrieval метрики")
     parser.add_argument("--verbose", "-v", action="store_true",
@@ -534,7 +735,7 @@ def parse_eval_args() -> argparse.Namespace:
                         help="Сохранить результаты в JSON-файл")
 
     # Парсим только известные аргументы, остальные игнорируем
-    args, _ = parser.parse_known_args()
+    args, unknown = parser.parse_known_args()
     return args
 
 
@@ -544,6 +745,7 @@ def parse_eval_args() -> argparse.Namespace:
 
 def run_eval(
         top_k: int,
+        language: str,
         skip_generation: bool,
         verbose: bool,
         debug_failures: bool,
@@ -558,7 +760,19 @@ def run_eval(
         print("   Запускайте eval.py из той же директории, что и rag_app.py")
         sys.exit(1)
 
-    print("🔧 Инициализация системы…")
+    # Выбираем тестовые кейсы в зависимости от языка
+    if language == "ru":
+        test_cases = TEST_CASES_RU
+        lang_label = "Russian"
+    elif language == "en":
+        test_cases = TEST_CASES_EN
+        lang_label = "English"
+    else:  # both
+        test_cases = TEST_CASES_RU + TEST_CASES_EN
+        lang_label = "Both (RU+EN)"
+
+    print(f"🔧 Инициализация системы…")
+    print(f"🌐 Язык тестов: {lang_label}")
     cfg = Config()
     cfg.top_k = top_k
     kb = KnowledgeBase(cfg)
@@ -567,15 +781,15 @@ def run_eval(
     results: List[CaseResult] = []
     start = time.time()
 
-    for i, case in enumerate(TEST_CASES, 1):
-        print(f"\r⏳ Кейс {i}/{len(TEST_CASES)}: {case['query'][:50]!r}", end="", flush=True)
+    for i, case in enumerate(test_cases, 1):
+        # print(f"\r⏳ Кейс {i}/{len(test_cases)}: {case['query'][:50]!r}", end="", flush=True)
 
         retrieved, status = kb.search(case["query"], top_k=top_k)
 
         retrieved_uris = [e["uri"] for e, _ in retrieved]
         retrieved_scores = [s for _, s in retrieved]
         retrieved_texts = [
-            " ".join([e["label"]] + [v for vals in e["properties"].values() for v in vals])
+            " ".join([e["label"]] + [v for vals in e.get("properties", {}).values() for v in vals])
             for e, _ in retrieved
         ]
 
@@ -597,17 +811,21 @@ def run_eval(
             compute_generation_metrics(cr)
 
         results.append(cr)
-        print_case(cr, verbose, debug_failures)
+        #print_case(cr, verbose, debug_failures)
 
     elapsed = time.time() - start
 
-    if debug_failures:
-        print_failure_summary(results)
+    #if debug_failures:
+        #print_failure_summary(results)
 
-    agg = aggregate(results)
-    print_summary(agg, elapsed)
+    agg = aggregate(results, language=lang_label)
+    #print_summary(agg, elapsed)
 
     if output_json:
+        if not output_json.is_absolute():
+            from config import PROJECT_ROOT
+            output_json = PROJECT_ROOT / output_json
+        output_json.parent.mkdir(parents=True, exist_ok=True)  # создаём папки
         payload = {
             "summary": agg,
             "elapsed_s": round(elapsed, 2),
@@ -642,6 +860,7 @@ def main():
 
     run_eval(
         top_k=args.top_k,
+        language=args.language,
         skip_generation=args.skip_generation,
         verbose=args.verbose,
         debug_failures=args.debug_failures,

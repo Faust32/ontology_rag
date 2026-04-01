@@ -1,0 +1,399 @@
+/Users/i.a.babushkin/PycharmProjects/pythonProject/.venv/bin/python /Users/i.a.babushkin/PycharmProjects/ontology_rag/src/main/eval.py --llm-model deepseek-r1:8b --embed-model mxbai-embed-large:latest --score-threshold 0.6
+🔧 Инициализация системы…
+⏳ Кейс 1/37: 'Кто создал Python и какой у него механизм трансляц'
+❌ [ok] 'Кто создал Python и какой у него механизм трансляции?'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['Python']
+   ├─ Retrieved URIs (normalized):
+   │  1. [0.796] local='MongoDB' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#MongoDB'
+   │  2. [0.787] local='ЛогическаяПарадигмаПрограммирования' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ЛогическаяПарадигмаПрограммирования'
+   │  3. [0.775] local='Elasticsearch' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Elasticsearch'
+   │  4. [0.755] local='МайклСтоунбрейкер' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#МайклСтоунбрейкер'
+   │  5. [0.754] local='MongoDBQueryLanguage' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#MongoDBQueryLanguage'
+   ├─ Manual match check:
+   │  Pattern 'Python':
+   │    vs 'MongoDB': False
+   │    vs 'ЛогическаяПарадигмаПрограммирования': False
+   │    vs 'Elasticsearch': False
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'интерпрет' (lower: 'интерпрет')
+   ├─ Found in answer: False
+   └─ Answer preview: 'Гвидо ван Россум создал Python [6].
+
+Механизм трансляции Python в контексте предоставленных данных не указан....'
+⏳ Кейс 2/37: 'Кто является автором языка Java?'
+❌ [ok] 'Кто является автором языка Java?'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['Java']
+   ├─ Retrieved URIs (normalized):
+   │  1. [0.777] local='MongoDB' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#MongoDB'
+   │  2. [0.771] local='ДжеймсГослинг' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДжеймсГослинг'
+   │  3. [0.770] local='ЛогическаяПарадигмаПрограммирования' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ЛогическаяПарадигмаПрограммирования'
+   │  4. [0.764] local='MongoDBQueryLanguage' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#MongoDBQueryLanguage'
+   │  5. [0.760] local='АленКолмероэ' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#АленКолмероэ'
+   ├─ Manual match check:
+   │  Pattern 'Java':
+   │    vs 'MongoDB': False
+   │    vs 'ДжеймсГослинг': False
+   │    vs 'ЛогическаяПарадигмаПрограммирования': False
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'гослинг' (lower: 'гослинг')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Джеймс Гослинг [2]...'
+⏳ Кейс 3/37: 'Что такое Haskell?'
+✅ [ok] 'Что такое Haskell?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'функциональн' (lower: 'функциональн')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Haskell — это стандартизированный чистый функциональный язык программирования общего назначения [8]. Он имеет статическую типизацию, компилируется и был первым выпущен в 1990 году. Отличительной черто...'
+⏳ Кейс 4/37: 'Для каких задач используется Prolog?'
+✅ [ok] 'Для каких задач используется Prolog?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'искусственн' (lower: 'искусственн')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Prolog используется для решения задач в следующих областях:
+
+1. Искусственный интеллект
+2. Компьютерная лингвистика
+3. Нечисловое программирование
+4. Задачи, связанные с объектами и их отношения...'
+⏳ Кейс 5/37: 'Кто создал LISP и в каком году?'
+❌ [ok] 'Кто создал LISP и в каком году?'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['LISP']
+   ├─ Retrieved URIs (normalized):
+   │  1. [0.766] local='ФилипУодлер' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ФилипУодлер'
+   │  2. [0.760] local='MongoDB' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#MongoDB'
+   │  3. [0.756] local='ЛогическаяПарадигмаПрограммирования' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ЛогическаяПарадигмаПрограммирования'
+   │  4. [0.754] local='АластерРид' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#АластерРид'
+   │  5. [0.753] local='Elasticsearch' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Elasticsearch'
+   ├─ Manual match check:
+   │  Pattern 'LISP':
+   │    vs 'ФилипУодлер': False
+   │    vs 'MongoDB': False
+   │    vs 'ЛогическаяПарадигмаПрограммирования': False
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'маккарти' (lower: 'маккарти')
+   ├─ Found in answer: False
+   └─ Answer preview: 'Не знаю...'
+⏳ Кейс 6/37: 'Кто разработал язык C и когда он был впервые выпущ'
+✅ [ok] 'Кто разработал язык C и когда он был впервые выпущен?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: '1972' (lower: '1972')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Язык C был разработан Деннисом Ритчи и впервые выпущен в 1972 году. [2]...'
+⏳ Кейс 7/37: 'Кто создал язык Perl?'
+✅ [ok] 'Кто создал язык Perl?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'ларри уолл' (lower: 'ларри уолл')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Ларри Уолл [1]....'
+⏳ Кейс 8/37: 'Что такое BASIC и для кого он создавался?'
+❌ [ok] 'Что такое BASIC и для кого он создавался?'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['BASIC']
+   ├─ Retrieved URIs (normalized):
+   │  1. [0.789] local='MongoDB' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#MongoDB'
+   │  2. [0.762] local='Elasticsearch' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Elasticsearch'
+   │  3. [0.748] local='МайклСтоунбрейкер' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#МайклСтоунбрейкер'
+   │  4. [0.747] local='MongoDBQueryLanguage' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#MongoDBQueryLanguage'
+   │  5. [0.744] local='ЛогическаяПарадигмаПрограммирования' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ЛогическаяПарадигмаПрограммирования'
+   ├─ Manual match check:
+   │  Pattern 'BASIC':
+   │    vs 'MongoDB': False
+   │    vs 'Elasticsearch': False
+   │    vs 'МайклСтоунбрейкер': False
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'начинающ' (lower: 'начинающ')
+   ├─ Found in answer: False
+   └─ Answer preview: 'В предоставленном контексте нет информации о языке программирования BASIC и его создателях. Ответа нет в контексте....'
+⏳ Кейс 9/37: 'Что такое SQL?'
+✅ [ok] 'Что такое SQL?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'реляционн' (lower: 'реляционн')
+   ├─ Found in answer: True
+   └─ Answer preview: 'SQL (аббр. от англ. Structured Query Language — «язык структурированных запросов») — язык запросов данных, применяемый для создания, модификации и управления данными в реляционной базе данных, управля...'
+⏳ Кейс 10/37: 'Какие подъязыки входят в состав SQL?'
+✅ [ok] 'Какие подъязыки входят в состав SQL?'
+⏳ Кейс 11/37: 'Кто создал PostgreSQL?'
+✅ [ok] 'Кто создал PostgreSQL?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'стоунбрейкер' (lower: 'стоунбрейкер')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Майкл Стоунбрейкер создал PostgreSQL [1]....'
+⏳ Кейс 12/37: 'Для чего используется язык Cypher?'
+✅ [ok] 'Для чего используется язык Cypher?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'граф' (lower: 'граф')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Cypher используется для выполнения эффективных запросов к данным в графе свойств. [1]...'
+⏳ Кейс 13/37: 'Что такое SPARQL?'
+✅ [ok] 'Что такое SPARQL?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'rdf' (lower: 'rdf')
+   ├─ Found in answer: True
+   └─ Answer preview: 'SPARQL — это язык запросов для работы с данными, представленными в формате RDF. Он используется для поиска информации в графовых базах данных и является рекомендацией консорциума W3C. SPARQL позволяет...'
+⏳ Кейс 14/37: 'Что такое JQL и для какой системы он предназначен?'
+✅ [ok] 'Что такое JQL и для какой системы он предназначен?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'jira' (lower: 'jira')
+   ├─ Found in answer: True
+   └─ Answer preview: 'JQL (Jira Query Language) — это язык запросов для системы Jira, созданный компанией Atlassian [4]....'
+⏳ Кейс 15/37: 'Кто является автором формата JSON?'
+✅ [ok] 'Кто является автором формата JSON?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'крокфорд' (lower: 'крокфорд')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Дуглас Крокфорд [7]....'
+⏳ Кейс 16/37: 'На основе каких языков создан YAML?'
+❌ [ok] 'На основе каких языков создан YAML?'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['YAML', 'JSON', 'XML']
+   ├─ Retrieved URIs (normalized):
+   │  1. [0.801] local='КларкЭванс' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#КларкЭванс'
+   │  2. [0.791] local='Elasticsearch' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Elasticsearch'
+   │  3. [0.788] local='MongoDB' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#MongoDB'
+   │  4. [0.786] local='ElasticsearchDSL' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ElasticsearchDSL'
+   │  5. [0.773] local='ЭрикМейер' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ЭрикМейер'
+   ├─ Manual match check:
+   │  Pattern 'YAML':
+   │    vs 'КларкЭванс': False
+   │    vs 'Elasticsearch': False
+   │    vs 'MongoDB': False
+   │  Pattern 'JSON':
+   │    vs 'КларкЭванс': False
+   │    vs 'Elasticsearch': False
+   │    vs 'MongoDB': False
+   │  Pattern 'XML':
+   │    vs 'КларкЭванс': False
+   │    vs 'Elasticsearch': False
+   │    vs 'MongoDB': False
+⏳ Кейс 17/37: 'Что такое BSON?'
+✅ [ok] 'Что такое BSON?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'бинарн' (lower: 'бинарн')
+   ├─ Found in answer: True
+   └─ Answer preview: 'BSON (Binary JavaScript Object Notation) — это формат электронного обмена цифровыми данными, бинарная форма представления простых структур данных и ассоциативных массивов. Он является надмножеством JS...'
+⏳ Кейс 18/37: 'Для чего используется CSV?'
+❌ [ok] 'Для чего используется CSV?'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['CSV']
+   ├─ Retrieved URIs (normalized):
+   │  1. [0.771] local='MongoDB' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#MongoDB'
+   │  2. [0.769] local='Elasticsearch' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Elasticsearch'
+   │  3. [0.759] local='РэймондБойс' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#РэймондБойс'
+   │  4. [0.756] local='ДональдЧемберлин' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДональдЧемберлин'
+   │  5. [0.751] local='МайклСтоунбрейкер' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#МайклСтоунбрейкер'
+   ├─ Manual match check:
+   │  Pattern 'CSV':
+   │    vs 'MongoDB': False
+   │    vs 'Elasticsearch': False
+   │    vs 'РэймондБойс': False
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'таблич' (lower: 'таблич')
+   ├─ Found in answer: False
+   └─ Answer preview: 'Не знаю...'
+⏳ Кейс 19/37: 'Кто разработал Protocol Buffers?'
+✅ [ok] 'Кто разработал Protocol Buffers?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'google' (lower: 'google')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Protocol Buffers был разработан Google [1], [2]....'
+⏳ Кейс 20/37: 'Что такое TOML и для чего он используется?'
+❌ [ok] 'Что такое TOML и для чего он используется?'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['TOML']
+   ├─ Retrieved URIs (normalized):
+   │  1. [0.778] local='Elasticsearch' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Elasticsearch'
+   │  2. [0.767] local='MongoDB' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#MongoDB'
+   │  3. [0.756] local='ЛарриУолл' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ЛарриУолл'
+   │  4. [0.753] local='ElasticsearchDSL' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ElasticsearchDSL'
+   │  5. [0.746] local='МайклСтоунбрейкер' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#МайклСтоунбрейкер'
+   ├─ Manual match check:
+   │  Pattern 'TOML':
+   │    vs 'Elasticsearch': False
+   │    vs 'MongoDB': False
+   │    vs 'ЛарриУолл': False
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'конфигурац' (lower: 'конфигурац')
+   ├─ Found in answer: False
+   └─ Answer preview: 'Не знаю...'
+⏳ Кейс 21/37: 'Для каких технологий используется Avro?'
+✅ [ok] 'Для каких технологий используется Avro?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'apache' (lower: 'apache')
+   ├─ Found in answer: False
+   └─ Answer preview: 'На основе предоставленного контекста:
+
+Avro используется для эффективного хранения и передачи данных между различными системами, особенно в распределённых вычислениях. Конкретные упомянутые технологии...'
+⏳ Кейс 22/37: 'Кто создал LaTeX и для чего он используется?'
+❌ [ok] 'Кто создал LaTeX и для чего он используется?'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['LaTeX']
+   ├─ Retrieved URIs (normalized):
+   │  1. [0.835] local='ЛеслиЛэмпорт' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ЛеслиЛэмпорт'
+   │  2. [0.784] local='ДжонатанКью' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДжонатанКью'
+   ├─ Manual match check:
+   │  Pattern 'LaTeX':
+   │    vs 'ЛеслиЛэмпорт': False
+   │    vs 'ДжонатанКью': False
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'лэмпорт' (lower: 'лэмпорт')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Лесли Лэмпорт создал LaTeX. [1]
+
+Не знаю, для чего LaTeX используется....'
+⏳ Кейс 23/37: 'Что такое TeX?'
+❌ [ok] 'Что такое TeX?'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['TeX']
+   ├─ Retrieved URIs (normalized):
+   │  1. [0.780] local='MongoDB' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#MongoDB'
+   │  2. [0.768] local='Elasticsearch' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Elasticsearch'
+   │  3. [0.765] local='ДжонатанКью' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДжонатанКью'
+   │  4. [0.759] local='ДональдЭрвинКнут' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДональдЭрвинКнут'
+   │  5. [0.747] local='ЛогическаяПарадигмаПрограммирования' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ЛогическаяПарадигмаПрограммирования'
+   ├─ Manual match check:
+   │  Pattern 'TeX':
+   │    vs 'MongoDB': False
+   │    vs 'Elasticsearch': False
+   │    vs 'ДжонатанКью': False
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'кнут' (lower: 'кнут')
+   ├─ Found in answer: True
+   └─ Answer preview: 'TeX — это система набора текста, созданная Дональдом Эрвином Кнутом. [4]...'
+⏳ Кейс 24/37: 'Какая организация разработала XML?'
+✅ [ok] 'Какая организация разработала XML?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'консорциум' (lower: 'консорциум')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Консорциум Всемирной паутины (W3C) разработал XML. [6]...'
+⏳ Кейс 25/37: 'Что такое HTML?'
+❌ [ok] 'Что такое HTML?'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['HTML']
+   ├─ Retrieved URIs (normalized):
+   │  1. [0.763] local='MongoDB' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#MongoDB'
+   │  2. [0.744] local='Elasticsearch' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Elasticsearch'
+   │  3. [0.727] local='МайклСтоунбрейкер' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#МайклСтоунбрейкер'
+   │  4. [0.723] local='ДжонатанКью' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДжонатанКью'
+   │  5. [0.722] local='РэймондБойс' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#РэймондБойс'
+   ├─ Manual match check:
+   │  Pattern 'HTML':
+   │    vs 'MongoDB': False
+   │    vs 'Elasticsearch': False
+   │    vs 'МайклСтоунбрейкер': False
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'разметк' (lower: 'разметк')
+   ├─ Found in answer: False
+   └─ Answer preview: 'HTML был создан Консорциумом Всемирной паутины [6]....'
+⏳ Кейс 26/37: 'Что такое RDF и как он представляет данные?'
+✅ [ok] 'Что такое RDF и как он представляет данные?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'триплет' (lower: 'триплет')
+   ├─ Found in answer: True
+   └─ Answer preview: 'RDF (Resource Description Framework) — это графовый язык описания данных, используемый для представления информации в виде утверждений о ресурсах [4].
+
+Основной способ представления данных в RDF — исп...'
+⏳ Кейс 27/37: 'Что такое ePub?'
+✅ [ok] 'Что такое ePub?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'электронн' (lower: 'электронн')
+   ├─ Found in answer: False
+   └─ Answer preview: 'ePub — это компьютерный язык, предназначенный для создания и распространения цифровых публикаций в одном файле, обеспечивая совместимость между программным и аппаратным обеспечением для воспроизведени...'
+⏳ Кейс 28/37: 'Какие типы диаграмм входят в UML?'
+✅ [ok] 'Какие типы диаграмм входят в UML?'
+⏳ Кейс 29/37: 'Что такое DOT и с каким инструментом он связан?'
+✅ [ok] 'Что такое DOT и с каким инструментом он связан?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'graphviz' (lower: 'graphviz')
+   ├─ Found in answer: True
+   └─ Answer preview: 'DOT — это формат описания графов, используемый для создания диаграмм. Он связан с инструментом **Graphviz**.
+
+[1]...'
+⏳ Кейс 30/37: 'Что такое функциональная парадигма программировани'
+❌ [ok] 'Что такое функциональная парадигма программирования?'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['ФункциональнаяПарадигмаПрограммирования']
+   ├─ Retrieved URIs (normalized):
+   │  1. [0.780] local='МайклСтоунбрейкер' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#МайклСтоунбрейкер'
+   │  2. [0.775] local='ЛогическаяПарадигмаПрограммирования' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ЛогическаяПарадигмаПрограммирования'
+   │  3. [0.772] local='MongoDB' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#MongoDB'
+   │  4. [0.759] local='Elasticsearch' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#Elasticsearch'
+   │  5. [0.754] local='РэймондБойс' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#РэймондБойс'
+   ├─ Manual match check:
+   │  Pattern 'ФункциональнаяПарадигмаПрограммирования':
+   │    vs 'МайклСтоунбрейкер': False
+   │    vs 'ЛогическаяПарадигмаПрограммирования': False
+   │    vs 'MongoDB': False
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'функц' (lower: 'функц')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Функциональная парадигма программирования является одной из подпарадигм декларативной парадигмы программирования [6]....'
+⏳ Кейс 31/37: 'Что такое логическая парадигма программирования?'
+✅ [ok] 'Что такое логическая парадигма программирования?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'логическ' (lower: 'логическ')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Логическая парадигма программирования — это **парадигма программирования, основанная на теории логики**. Она является дополнительной парадигмой для Python и основной парадигмой для языка Prolog [1]....'
+⏳ Кейс 32/37: 'Кто создал MASM?'
+✅ [ok] 'Кто создал MASM?'
+   📝 GENERATION CHECK:
+   ├─ Expected substring: 'microsoft' (lower: 'microsoft')
+   ├─ Found in answer: True
+   └─ Answer preview: 'Microsoft создала MASM [1, 4]....'
+⏳ Кейс 33/37: 'Какие языки используют интерпретацию вместо компил'
+❌ [ok] 'Какие языки используют интерпретацию вместо компиляции?'
+   🔍 RETRIEVAL FAILED:
+   ├─ Expected: ['Python', 'LISP', 'Prolog', 'Perl']
+   ├─ Retrieved URIs (normalized):
+   │  1. [0.764] local='ЛогическаяПарадигмаПрограммирования' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ЛогическаяПарадигмаПрограммирования'
+   │  2. [0.752] local='АленКолмероэ' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#АленКолмероэ'
+   │  3. [0.747] local='ДональдЧемберлин' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#ДональдЧемберлин'
+   │  4. [0.745] local='SQLite' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#SQLite'
+   │  5. [0.744] local='DML' | full='http://www.semanticweb.org/mikhail/ontologies/2024/11/comp-langs#DML'
+   ├─ Manual match check:
+   │  Pattern 'Python':
+   │    vs 'ЛогическаяПарадигмаПрограммирования': False
+   │    vs 'АленКолмероэ': False
+   │    vs 'ДональдЧемберлин': False
+   │  Pattern 'LISP':
+   │    vs 'ЛогическаяПарадигмаПрограммирования': False
+   │    vs 'АленКолмероэ': False
+   │    vs 'ДональдЧемберлин': False
+   │  Pattern 'Prolog':
+   │    vs 'ЛогическаяПарадигмаПрограммирования': False
+   │    vs 'АленКолмероэ': False
+   │    vs 'ДональдЧемберлин': False
+   │  Pattern 'Perl':
+   │    vs 'ЛогическаяПарадигмаПрограммирования': False
+   │    vs 'АленКолмероэ': False
+   │    vs 'ДональдЧемберлин': False
+⏳ Кейс 34/37: 'Назови языки программирования с компиляцией кода.'
+✅ [ok] 'Назови языки программирования с компиляцией кода.'
+⏳ Кейс 35/37: 'Какие существуют диалекты SQL?'
+✅ [ok] 'Какие существуют диалекты SQL?'
+⏳ Кейс 36/37: 'Что такое язык программирования Rust?'
+❌ [ok] 'Что такое язык программирования Rust?'
+⏳ Кейс 37/37: 'Какая столица у Франции?'
+❌ [ok] 'Какая столица у Франции?'
+
+============================================================
+📊  ИТОГИ ОЦЕНКИ
+============================================================
+Кейсов             : 37
+
+── Retrieval ──────────────────────────
+  Hit Rate@k       : 0.622
+  Precision@k      : 0.191
+  Recall@k         : 0.589
+  MRR              : 0.387
+
+── Generation (29 кейсов) ──────────────
+  Exact Match      : 0.724
+  Adherence        : 0.306
+
+⏱️  Время           : 363.4с
+============================================================
+
+Process finished with exit code 0

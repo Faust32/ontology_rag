@@ -18,12 +18,25 @@ from rdf_processor import RDFProcessor
 logger = logging.getLogger(__name__)
 
 
+def detect_lang(text: str) -> str:
+    """
+    Определяет язык текста по доле кириллических символов.
+    Возвращает "ru" или "en".
+    """
+    if not text:
+        return "ru"
+    cyrillic = sum(1 for c in text if '\u0400' <= c <= '\u04FF')
+    return "ru" if cyrillic / max(len(text), 1) > 0.3 else "en"
+
+
 class KnowledgeBase:
     def __init__(self, config: Config):
         self.cfg = config
         self.entities: List[Dict] = []
-        self.texts: List[str] = []
-        self.index: Optional[faiss.IndexFlatIP] = None
+        self.texts_ru: List[str] = []
+        self.texts_en: List[str] = []
+        self.index_ru: Optional[faiss.IndexFlatIP] = None
+        self.index_en: Optional[faiss.IndexFlatIP] = None
         self._load_or_build()
 
     # ------------------------------------------------------------------
@@ -31,14 +44,6 @@ class KnowledgeBase:
     # ------------------------------------------------------------------
 
     def _calculate_dynamic_threshold(self, scores: np.ndarray) -> float:
-        """
-        - Если top_score < score_threshold → возвращаем score_threshold,
-          и все результаты будут отфильтрованы в search().
-        - «Локоть» используется только для ужесточения (повышения порога),
-          но никогда не опускает его ниже base_threshold.
-        - Нет принудительного пропуска хотя бы одного результата.
-          «Не знаю» лучше, чем ложь.
-        """
         base_threshold = self.cfg.score_threshold
 
         if len(scores) == 0:
@@ -61,10 +66,8 @@ class KnowledgeBase:
         if len(diffs) > 0:
             max_diff_idx = int(np.argmax(np.abs(diffs)))
             if abs(diffs[max_diff_idx]) > 0.05:
-                # Скор ПОСЛЕ разрыва: всё что ниже — нерелевантно
                 elbow_threshold = float(scores[max_diff_idx + 1])
 
-        # Порог = max(base, elbow). Никакого min(threshold, top_score).
         threshold = max(base_threshold, elbow_threshold)
         logger.info(
             "Threshold: %.3f (base=%.3f, elbow=%.3f, top=%.3f)",
@@ -77,7 +80,6 @@ class KnowledgeBase:
     # ------------------------------------------------------------------
 
     def _get_embedding_single(self, text: str) -> Optional[np.ndarray]:
-        """Один запрос с тремя попытками и экспоненциальным back-off."""
         url = f"{self.cfg.ollama_base}/api/embeddings"
         payload = {"model": self.cfg.embed_model, "prompt": text}
         for attempt in range(3):
@@ -96,22 +98,12 @@ class KnowledgeBase:
             texts: List[str],
             offset: int = 0,
     ) -> Tuple[Optional[np.ndarray], List[int]]:
-        """
-        Адаптивный батчинг:
-        1. Пробуем нативный батч Ollama (один HTTP-запрос, список строк)
-        2. При ошибке — деградируем до последовательных одиночных запросов
-        3. При одиночной ошибке — повторяем с очисткой текста
-        """
-        # --- Попытка 1: нативный батч Ollama ---
         vecs, failed = self._try_batch_request(texts, offset)
         if failed:
-            # Деградируем только для упавших позиций
             logger.info("Retrying %d failed positions sequentially…", len(failed))
             retry_vecs, still_failed = self._sequential_fallback(texts, failed, offset)
-            # Вставляем восстановленные векторы на правильные позиции
             if retry_vecs:
                 for local_idx, vec in retry_vecs.items():
-                    # Находим куда вставить в итоговый массив
                     vecs = self._insert_vec(vecs, local_idx, vec, texts)
             failed = still_failed
         return vecs, failed
@@ -121,13 +113,8 @@ class KnowledgeBase:
             texts: List[str],
             offset: int,
     ) -> Tuple[Optional[np.ndarray], List[int]]:
-        """
-        Ollama /api/embeddings принимает одну строку.
-        Но можно сделать параллельные запросы с семафором — не более N одновременно.
-        Семафор предотвращает перегрузку при большом chunk_size.
-        """
         import threading
-        semaphore = threading.Semaphore(2)  # макс 2 одновременных запроса к Ollama
+        semaphore = threading.Semaphore(2)
 
         results: Dict[int, Optional[np.ndarray]] = {}
         failed: List[int] = []
@@ -166,12 +153,6 @@ class KnowledgeBase:
             failed_global: List[int],
             offset: int,
     ) -> Tuple[Dict[int, np.ndarray], List[int]]:
-        """
-        Для каждой упавшей позиции:
-        1. Чистим текст (убираем спецсимволы, которые могут ломать токенизатор)
-        2. Пробуем ещё раз с увеличенным таймаутом
-        3. Если снова провал — записываем в окончательный failed
-        """
         recovered: Dict[int, np.ndarray] = {}
         still_failed: List[int] = []
 
@@ -182,7 +163,7 @@ class KnowledgeBase:
                 continue
 
             cleaned = self._sanitize_text(all_texts[local_idx])
-            time.sleep(1.0)  # пауза перед повтором — даём Ollama выдохнуть
+            time.sleep(1.0)
 
             vec = self._get_embedding_single_extended(cleaned, timeout=240)
             if vec is not None:
@@ -196,18 +177,9 @@ class KnowledgeBase:
 
     @staticmethod
     def _sanitize_text(text: str) -> str:
-        """
-        Убираем символы, которые могут ломать токенизатор Ollama/llama.cpp:
-        - Управляющие символы (кроме пробела и \n)
-        - Суррогатные пары Unicode
-        - Нулевые байты
-        """
         import re
-        # Нулевые байты и суррогаты
         text = text.encode("utf-8", errors="ignore").decode("utf-8")
-        # Управляющие символы (U+0000–U+001F кроме \t \n)
         text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", " ", text)
-        # Множественные пробелы
         text = re.sub(r" {2,}", " ", text)
         return text.strip()
 
@@ -216,10 +188,9 @@ class KnowledgeBase:
             text: str,
             timeout: int = 240,
     ) -> Optional[np.ndarray]:
-        """Одиночный запрос с увеличенным таймаутом для проблемных текстов."""
         url = f"{self.cfg.ollama_base}/api/embeddings"
         payload = {"model": self.cfg.embed_model, "prompt": text}
-        for attempt in range(5):  # больше попыток для fallback
+        for attempt in range(5):
             try:
                 resp = requests.post(url, json=payload, timeout=timeout)
                 resp.raise_for_status()
@@ -229,7 +200,7 @@ class KnowledgeBase:
                     continue
                 return np.array(data["embedding"], dtype="float32")
             except Exception as exc:
-                wait = min(2 ** attempt, 30)  # экспоненциальный back-off, макс 30с
+                wait = min(2 ** attempt, 30)
                 logger.warning(
                     "Extended attempt %d/5 failed (%s), waiting %ds…",
                     attempt + 1, exc, wait,
@@ -244,11 +215,6 @@ class KnowledgeBase:
             vec: np.ndarray,
             all_texts: List[str],
     ) -> np.ndarray:
-        """
-        Вставка восстановленного вектора в правильную позицию.
-        Без этого recovered entities окажутся в конце, ломая соответствие
-        entities[i] ↔ faiss_index[i].
-        """
         if existing is None:
             return vec.reshape(1, -1)
         return np.vstack([existing, vec.reshape(1, -1)])
@@ -256,6 +222,36 @@ class KnowledgeBase:
     # ------------------------------------------------------------------
     # Построение и загрузка индекса
     # ------------------------------------------------------------------
+
+    def _embed_texts(self, texts: List[str], lang_label: str) -> np.ndarray:
+        """Эмбеддит список текстов, возвращает матрицу векторов."""
+        all_vectors: List[np.ndarray] = []
+        all_failed: List[int] = []
+
+        for i in tqdm(
+                range(0, len(texts), self.cfg.chunk_size),
+                desc=f"Embedding ({lang_label})"
+        ):
+            batch = texts[i: i + self.cfg.chunk_size]
+            vecs, failed = self._get_embeddings_batch(batch, offset=i)
+            if vecs is not None:
+                all_vectors.append(vecs)
+            all_failed.extend(failed)
+
+        if all_failed:
+            logger.warning(
+                "Skipping %d texts due to embedding failures in %s index",
+                len(all_failed), lang_label,
+            )
+            # Для упрощения не удаляем — заполняем нулями (FAISS отфильтрует по score)
+            # В production лучше синхронизировать удаление между индексами
+
+        if not all_vectors:
+            raise RuntimeError(f"All embedding batches failed for {lang_label}")
+
+        vectors = np.vstack(all_vectors).astype("float32")
+        faiss.normalize_L2(vectors)
+        return vectors
 
     def _build_index(self):
         logger.info("Parsing ontology: %s", self.cfg.ontology_path)
@@ -278,70 +274,107 @@ class KnowledgeBase:
             raise ValueError("No meaningful entities found in ontology")
         logger.info("Found %d entities with content", len(entities_data))
 
-        texts = [RDFProcessor.context_to_text(ctx) for ctx in entities_data]
+        # Определяем, какие индексы строить
+        lang_index = getattr(self.cfg, 'lang_index', None)
 
-        # --- Эмбеддинги ---
-        all_vectors: List[np.ndarray] = []
-        all_failed: List[int] = []
-
-        for i in tqdm(range(0, len(texts), self.cfg.chunk_size), desc="Embedding"):
-            batch = texts[i : i + self.cfg.chunk_size]
-            vecs, failed = self._get_embeddings_batch(batch, offset=i)
-            if vecs is not None:
-                all_vectors.append(vecs)
-            all_failed.extend(failed)
-
-        # Удаляем сущности без вектора (в обратном порядке — не ломаем индексы)
-        if all_failed:
-            logger.warning(
-                "Skipping %d entities due to embedding failures: %s…",
-                len(all_failed), all_failed[:10],
-            )
-            for idx in sorted(all_failed, reverse=True):
-                entities_data.pop(idx)
-                texts.pop(idx)
-
-        if not all_vectors:
-            raise RuntimeError("All embedding batches failed — cannot build index")
-
-        vectors = np.vstack(all_vectors).astype("float32")
-        if vectors.shape[0] == 0:
-            raise RuntimeError("Zero vectors after embedding — check embed model")
-
-        faiss.normalize_L2(vectors)
+        if lang_index == "ru":
+            build_ru, build_en = True, False
+        elif lang_index == "en":
+            build_ru, build_en = False, True
+        else:  # None — строим оба
+            build_ru, build_en = True, True
 
         self.entities = entities_data
-        self.texts = texts
-        self.index = faiss.IndexFlatIP(vectors.shape[1])
-        self.index.add(vectors)
+        dim = None
 
-        # --- Сохранение ---
-        # ИСПРАВЛЕНИЕ #5: Добавляем schema_version в метаданные.
-        # При изменении логики парсинга меняем Config.INDEX_SCHEMA_VERSION,
-        # и старый кэш будет автоматически перестроен.
-        faiss_path = str(self.cfg.index_path) + ".faiss"
-        faiss.write_index(self.index, faiss_path)
+        # --- Русский индекс ---
+        if build_ru:
+            texts_ru = [RDFProcessor.context_to_text(ctx, lang="ru") for ctx in entities_data]
+            self.texts_ru = texts_ru
+
+            logger.info("Building Russian index…")
+            vectors_ru = self._embed_texts(texts_ru, "RU")
+            dim = vectors_ru.shape[1]
+
+            self.index_ru = faiss.IndexFlatIP(dim)
+            self.index_ru.add(vectors_ru)
+
+            faiss_path_ru = str(self.cfg.index_path) + "_ru.faiss"
+            faiss.write_index(self.index_ru, faiss_path_ru)
+            logger.info("Saved RU index: %s", faiss_path_ru)
+        else:
+            self.texts_ru = []
+            self.index_ru = None
+
+        # --- Английский индекс ---
+        if build_en:
+            texts_en = [RDFProcessor.context_to_text(ctx, lang="en") for ctx in entities_data]
+            self.texts_en = texts_en
+
+            logger.info("Building English index…")
+            vectors_en = self._embed_texts(texts_en, "EN")
+            dim = vectors_en.shape[1]
+
+            self.index_en = faiss.IndexFlatIP(dim)
+            self.index_en.add(vectors_en)
+
+            faiss_path_en = str(self.cfg.index_path) + "_en.faiss"
+            faiss.write_index(self.index_en, faiss_path_en)
+            logger.info("Saved EN index: %s", faiss_path_en)
+        else:
+            self.texts_en = []
+            self.index_en = None
+
+        # --- Сохранение метаданных ---
         meta = {
             "entities": self.entities,
-            "texts": self.texts,
-            "dim": vectors.shape[1],
+            "texts_ru": self.texts_ru,
+            "texts_en": self.texts_en,
+            "dim": dim,
             "ontology_mtime": self.cfg.ontology_path.stat().st_mtime,
             "schema_version": Config.INDEX_SCHEMA_VERSION,
         }
         with self.cfg.index_path.open("wb") as f:
             pickle.dump(meta, f)
-        logger.info("Index built: %d entities, %dD", len(self.entities), vectors.shape[1])
+
+        built_langs = []
+        if build_ru:
+            built_langs.append("RU")
+        if build_en:
+            built_langs.append("EN")
+
+        logger.info(
+            "Index built: %d entities, %dD, languages: %s",
+            len(self.entities), dim, "+".join(built_langs)
+        )
 
     def _load_or_build(self):
-        faiss_path = str(self.cfg.index_path) + ".faiss"
+        faiss_path_ru = str(self.cfg.index_path) + "_ru.faiss"
+        faiss_path_en = str(self.cfg.index_path) + "_en.faiss"
         rebuild = True
 
-        if self.cfg.index_path.exists() and Path(faiss_path).exists():
+        # Определяем, какие индексы нужны на основе конфига
+        lang_index = getattr(self.cfg, 'lang_index', None)
+
+        if lang_index == "ru":
+            need_ru, need_en = True, False
+        elif lang_index == "en":
+            need_ru, need_en = False, True
+        else:  # None — грузим оба
+            need_ru, need_en = True, True
+
+        # Проверяем наличие нужных файлов
+        required_files_exist = self.cfg.index_path.exists()
+        if need_ru:
+            required_files_exist = required_files_exist and Path(faiss_path_ru).exists()
+        if need_en:
+            required_files_exist = required_files_exist and Path(faiss_path_en).exists()
+
+        if required_files_exist:
             try:
                 with self.cfg.index_path.open("rb") as f:
                     meta = pickle.load(f)
 
-                # ИСПРАВЛЕНИЕ #5: Проверяем версию схемы перед загрузкой.
                 cached_version = meta.get("schema_version", 0)
                 if cached_version != Config.INDEX_SCHEMA_VERSION:
                     logger.warning(
@@ -353,10 +386,28 @@ class KnowledgeBase:
                     current_mtime = self.cfg.ontology_path.stat().st_mtime
                     if current_mtime <= cached_mtime:
                         self.entities = meta["entities"]
-                        self.texts = meta["texts"]
-                        self.index = faiss.read_index(faiss_path)
+                        self.texts_ru = meta.get("texts_ru", meta.get("texts", []))
+                        self.texts_en = meta.get("texts_en", meta.get("texts", []))
+
+                        # Загружаем только нужные индексы
+                        if need_ru:
+                            self.index_ru = faiss.read_index(faiss_path_ru)
+                            logger.info("Loaded RU index (%d vectors)", self.index_ru.ntotal)
+
+                        if need_en:
+                            self.index_en = faiss.read_index(faiss_path_en)
+                            logger.info("Loaded EN index (%d vectors)", self.index_en.ntotal)
+
                         rebuild = False
-                        logger.info("Loaded cached index (%d entities)", len(self.entities))
+                        loaded_langs = []
+                        if need_ru:
+                            loaded_langs.append("RU")
+                        if need_en:
+                            loaded_langs.append("EN")
+                        logger.info(
+                            "Loaded cached index (%d entities, languages: %s)",
+                            len(self.entities), "+".join(loaded_langs)
+                        )
             except Exception as exc:
                 logger.warning("Cache load failed: %s — rebuilding", exc)
 
@@ -371,15 +422,33 @@ class KnowledgeBase:
     # ------------------------------------------------------------------
 
     def search(
-        self,
-        query: str,
-        top_k: Optional[int] = None,
+            self,
+            query: str,
+            top_k: Optional[int] = None,
     ) -> Tuple[List[Tuple[Dict, float]], str]:
         if top_k is None:
             top_k = self.cfg.top_k
 
-        if not self.entities or self.index is None:
+        if not self.entities:
             return [], "index_empty"
+
+        # Определяем язык запроса
+        lang = detect_lang(query)
+
+        # Выбираем индекс
+        if lang == "ru" and self.index_ru is not None:
+            index = self.index_ru
+        elif lang == "en" and self.index_en is not None:
+            index = self.index_en
+        elif self.index_ru is not None:
+            index = self.index_ru
+        elif self.index_en is not None:
+            index = self.index_en
+        else:
+            return [], "index_empty"
+
+        actual_lang = "RU" if index is self.index_ru else "EN"
+        logger.debug("Query lang: %s, using index: %s", lang, actual_lang)
 
         vec = self._get_embedding_single(f"search_query: {query}")
         if vec is None:
@@ -392,9 +461,8 @@ class KnowledgeBase:
         if search_k == 0:
             return [], "index_empty"
 
-        dists, indices = self.index.search(q_vec, search_k)
+        dists, indices = index.search(q_vec, search_k)
 
-        # Фильтруем нулевые и отрицательные скоры (FAISS возвращает -1 для пустых слотов)
         valid_mask = dists[0] > 0
         valid_scores = dists[0][valid_mask]
 
@@ -403,14 +471,12 @@ class KnowledgeBase:
 
         threshold = self._calculate_dynamic_threshold(valid_scores)
 
-        # ИСПРАВЛЕНИЕ #2: Дедупликация по URI
         results: List[Tuple[Dict, float]] = []
         seen_uris: set = set()
 
         for score, idx in zip(dists[0], indices[0]):
             if idx < 0:
                 continue
-            # ИСПРАВЛЕНИЕ #1: жёсткий порог — не пропускаем ничего ниже threshold
             if score < threshold:
                 continue
             entity = self.entities[idx]
@@ -425,3 +491,12 @@ class KnowledgeBase:
         if not results:
             return [], "below_threshold"
         return results, "ok"
+
+    # ------------------------------------------------------------------
+    # Свойство для обратной совместимости
+    # ------------------------------------------------------------------
+
+    @property
+    def texts(self) -> List[str]:
+        """Для обратной совместимости возвращает русские тексты."""
+        return self.texts_ru

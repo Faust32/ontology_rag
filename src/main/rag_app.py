@@ -3,7 +3,7 @@ import time
 from typing import List, Tuple, Dict
 
 from config import Config
-from knowledge_base import KnowledgeBase
+from knowledge_base import KnowledgeBase, detect_lang
 from llm_client import LLMClient
 from rdf_processor import RDFProcessor
 
@@ -33,7 +33,8 @@ class RAGApp:
         if not results:
             return "❌ Не найдено релевантной информации.", [], "empty"
 
-        system = self.llm.build_system_prompt(results)
+        lang = detect_lang(query)
+        system = self.llm.build_system_prompt(results, lang=lang)
         answer = self.llm.call(system=system, user=query)
         return answer, results, status
 
@@ -46,40 +47,40 @@ class RAGApp:
         retrieved: List[Tuple[Dict, float]],
         elapsed: float,
         status: str,
+        lang: str = "ru",
     ) -> None:
         """
-        Печатает блок источников под ответом.
-        Вынесено в отдельный метод, чтобы run() не превращался
-        в простыню форматирования.
+        Печатает блок источников под ответом на нужном языке.
         """
         print("\n" + "─" * 70)
         print(f"📌 ИСТОЧНИКИ  (за {elapsed:.2f}с | статус: {status})")
         print("─" * 70)
 
         for i, (entity, score) in enumerate(retrieved, 1):
-            # Заголовок источника
-            print(f"\n[{i}] {entity['label']}  (score: {score:.3f})")
+            label = entity.get(f"label_{lang}", entity["label"])
+            types = entity.get(f"types_{lang}", entity["types"])
+            props = entity.get(f"properties_{lang}", entity["properties"])
 
-            # Тип(ы) сущности
-            if entity["types"]:
-                print(f"    Тип: {', '.join(entity['types'])}")
+            print(f"\n[{i}] {label}  (score: {score:.3f})")
 
-            # До 3 свойств, по 1 значению каждого — не перегружаем экран
+            if types:
+                type_prefix = "Тип" if lang == "ru" else "Type"
+                print(f"    {type_prefix}: {', '.join(types)}")
+
             shown = 0
-            for prop, vals in list(entity["properties"].items())[:3]:
+            for prop, vals in list(props.items())[:3]:
                 if not vals:
                     continue
-                # Обрезаем длинные значения для читаемости в терминале
                 val_short = vals[0][:80] + "…" if len(vals[0]) > 80 else vals[0]
                 print(f"    • {prop}: {val_short}")
                 shown += 1
                 if shown >= 3:
                     break
 
-            # Входящие ссылки, если есть
             if entity.get("incoming"):
                 refs = ", ".join(entity["incoming"][:2])
-                print(f"    ← {refs}")
+                ref_prefix = "Ссылаются" if lang == "ru" else "Referenced by"
+                print(f"    ← {ref_prefix}: {refs}")
 
     # ------------------------------------------------------------------
     # Основной цикл
@@ -115,6 +116,7 @@ class RAGApp:
                 start_time = time.time()
 
                 answer, retrieved, status = self.answer_question(query)
+                lang = detect_lang(query)
 
                 elapsed = time.time() - start_time
 
@@ -126,7 +128,7 @@ class RAGApp:
 
                 # --- Источники (только если есть что показать) ---
                 if retrieved:
-                    self._print_sources(retrieved, elapsed, status)
+                    self._print_sources(retrieved, elapsed, status, lang=lang)
                 else:
                     # Нет источников — показываем хотя бы время и статус
                     print(f"\n⏱️  Время: {elapsed:.2f}с | Статус: {status}")

@@ -50,26 +50,34 @@ class LLMClient:
             logger.error("LLM call failed: %s", exc)
             return f"[Ошибка генерации: {exc}]"
 
-    def build_system_prompt(self, context_parts: List[Tuple[Dict, float]]) -> str:
+    def build_system_prompt(self, context_parts: List[Tuple[Dict, float]], lang: str = "ru") -> str:
         """
-        Системный промпт отделён от пользовательского вопроса.
-        Контекст из онтологии передаётся здесь, вопрос — в user-сообщении.
+        Системный промпт на языке запроса.
+        lang: "ru" или "en" — определяется автоматически в RAGApp.
         """
         context_str = "\n\n".join(
-            f"[{i}] (score: {score:.3f})\n{self._format_context(entity)}"
+            f"[{i}] (score: {score:.3f})\n{self._format_context(entity, lang)}"
             for i, (entity, score) in enumerate(context_parts, 1)
         )
-        return (
-            "You are an assistant for an ontology of programming languages "
-            "and computer technologies.\n"
-            "Answer ONLY based on the provided context. "
-            "Be precise and concise.\n"
-            "Cite sources as [1], [2], etc. "
-            "If the context lacks sufficient info, say so explicitly.\n\n"
-            f"CONTEXT:\n{context_str}"
-        )
+        if lang == "ru":
+            return (
+                "Ты — ассистент по онтологии, факты из которой приходят тебе в КОНТЕКСТЕ.\n"
+                "Отвечай ТОЛЬКО на основе предоставленного контекста, кратко и точно.\n"
+                "Отвечай СТРОГО НА РУССКОМ ЯЗЫКЕ, даже если контекст содержит английский текст.\n"
+                "Ссылайся на источники как [1], [2] и т.д.\n"
+                "Если ответа нет в контексте, скажи 'Не знаю', НЕ ИСПОЛЬЗУЙ внешние знания\n\n"
+                f"КОНТЕКСТ:\n{context_str}"
+            )
+        else:
+            return (
+                "You are an assistant based on ontology, facts of which you get of CONTEXT.\n"
+                "Answer ONLY based on the provided context, precisely and concisely.\n"
+                "Cite sources as [1], [2], etc.\n"
+                "If the context lacks sufficient info, say 'I don't know' — DO NOT USE external knowledge.\n\n"
+                f"CONTEXT:\n{context_str}"
+            )
 
     @staticmethod
-    def _format_context(entity: Dict) -> str:
+    def _format_context(entity: Dict, lang: str = "ru") -> str:
         from rdf_processor import RDFProcessor
-        return RDFProcessor.context_to_display(entity)
+        return RDFProcessor.context_to_display(entity, lang=lang)
