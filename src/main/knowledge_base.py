@@ -256,7 +256,7 @@ class KnowledgeBase:
     def _build_index(self):
         logger.info("Parsing ontology: %s", self.cfg.ontology_path)
         g = Graph()
-        g.parse(self.cfg.ontology_path.as_posix(), format="turtle")
+        g.parse(self.cfg.ontology_path.as_posix())
 
         subjects: set = set(g.subjects(RDF.type, OWL.NamedIndividual))
         if not subjects:

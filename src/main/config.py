@@ -9,14 +9,14 @@ RESOURCES_DIR = PROJECT_ROOT / "ontology_rag/resources"
 
 def build_config() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Ontology-RAG CLI")
-    parser.add_argument("--ontology", default=str(RESOURCES_DIR / "ontology.ttl"))
+    parser.add_argument("--ontology", default=str(RESOURCES_DIR / "BehaviorChoiceDeterminantsOntology.ttl"))
     parser.add_argument("--index", default=str(RESOURCES_DIR / "ontology_index.pkl"))
     parser.add_argument("--llm-host", default="http://localhost:11434")
     parser.add_argument("--llm-model", default="llama3:8b")
     parser.add_argument("--embed-model", default="nomic-embed-text")
     parser.add_argument("--top-k", type=int, default=8)
     parser.add_argument("--chunk-size", type=int, default=16)
-    parser.add_argument("--score-threshold", type=float, default=0.6)
+    parser.add_argument("--score-threshold", type=float, default=0.55)
     parser.add_argument("--embed-delay", type=float, default=0.2)
     parser.add_argument("--embed-workers", type=int, default=1,
                         help="Parallel workers for embedding requests")
