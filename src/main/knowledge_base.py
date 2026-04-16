@@ -37,6 +37,7 @@ class KnowledgeBase:
         self.texts_en: List[str] = []
         self.index_ru: Optional[faiss.IndexFlatIP] = None
         self.index_en: Optional[faiss.IndexFlatIP] = None
+        self.graph: Optional[Graph] = None
         self._load_or_build()
 
     # ------------------------------------------------------------------
@@ -258,6 +259,8 @@ class KnowledgeBase:
         g = Graph()
         g.parse(self.cfg.ontology_path.as_posix())
 
+        self.graph = g # save graph
+
         subjects: set = set(g.subjects(RDF.type, OWL.NamedIndividual))
         if not subjects:
             logger.warning("No owl:NamedIndividual found, using all URIRef subjects")
@@ -333,6 +336,7 @@ class KnowledgeBase:
             "dim": dim,
             "ontology_mtime": self.cfg.ontology_path.stat().st_mtime,
             "schema_version": Config.INDEX_SCHEMA_VERSION,
+            "graph": g,  # <-- save graph in pickle
         }
         with self.cfg.index_path.open("wb") as f:
             pickle.dump(meta, f)
@@ -353,17 +357,15 @@ class KnowledgeBase:
         faiss_path_en = str(self.cfg.index_path) + "_en.faiss"
         rebuild = True
 
-        # Определяем, какие индексы нужны на основе конфига
         lang_index = getattr(self.cfg, 'lang_index', None)
 
         if lang_index == "ru":
             need_ru, need_en = True, False
         elif lang_index == "en":
             need_ru, need_en = False, True
-        else:  # None — грузим оба
+        else:
             need_ru, need_en = True, True
 
-        # Проверяем наличие нужных файлов
         required_files_exist = self.cfg.index_path.exists()
         if need_ru:
             required_files_exist = required_files_exist and Path(faiss_path_ru).exists()
@@ -389,7 +391,14 @@ class KnowledgeBase:
                         self.texts_ru = meta.get("texts_ru", meta.get("texts", []))
                         self.texts_en = meta.get("texts_en", meta.get("texts", []))
 
-                        # Загружаем только нужные индексы
+                        # --- ВОССТАНОВЛЕНИЕ ГРАФА ---
+                        self.graph = meta.get("graph", None)
+                        if self.graph is None:
+                            # Граф не был в кеше (старый формат) — парсим
+                            logger.info("Graph not in cache, parsing ontology…")
+                            self.graph = Graph()
+                            self.graph.parse(self.cfg.ontology_path.as_posix())
+
                         if need_ru:
                             self.index_ru = faiss.read_index(faiss_path_ru)
                             logger.info("Loaded RU index (%d vectors)", self.index_ru.ntotal)

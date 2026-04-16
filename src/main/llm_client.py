@@ -65,6 +65,7 @@ class LLMClient:
                 "Отвечай ТОЛЬКО на основе предоставленного контекста, кратко и точно.\n"
                 "Отвечай СТРОГО НА РУССКОМ ЯЗЫКЕ, даже если контекст содержит английский текст.\n"
                 "Ссылайся на источники как [1], [2] и т.д.\n"
+                "НЕ ВКЛЮЧАЙ в ответ технические метрики, такие как score, confidence или рейтинги из контекста.\n"
                 "Если ответа нет в контексте, скажи 'Не знаю', НЕ ИСПОЛЬЗУЙ внешние знания\n\n"
                 f"КОНТЕКСТ:\n{context_str}"
             )
@@ -73,6 +74,7 @@ class LLMClient:
                 "You are an assistant based on ontology, facts of which you get of CONTEXT.\n"
                 "Answer ONLY based on the provided context, precisely and concisely.\n"
                 "Cite sources as [1], [2], etc.\n"
+                "DO NOT include technical metrics like score, confidence, or ratings from the context in your answer.\n"
                 "If the context lacks sufficient info, say 'I don't know' — DO NOT USE external knowledge.\n\n"
                 f"CONTEXT:\n{context_str}"
             )

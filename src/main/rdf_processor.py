@@ -1,7 +1,7 @@
 import logging
 from itertools import islice
-from typing import Dict, List, Optional
-
+from typing import Dict, List, Optional, Set
+from collections import deque
 from rdflib import Graph, RDFS, RDF, OWL, URIRef, Literal, BNode
 
 logger = logging.getLogger(__name__)
@@ -9,6 +9,11 @@ logger = logging.getLogger(__name__)
 _MAX_VALUE_LEN = 1500
 _MAX_INCOMING = 5
 _MAX_SUPERCLASSES = 3
+
+OWL_ON_PROPERTY = OWL.onProperty
+OWL_SOME = OWL.someValuesFrom
+OWL_ALL = OWL.allValuesFrom
+OWL_HAS_VALUE = OWL.hasValue
 
 
 class RDFProcessor:
@@ -91,6 +96,17 @@ class RDFProcessor:
         for _, obj in g.predicate_objects(node):
             if isinstance(obj, BNode):
                 values.extend(RDFProcessor._resolve_bnode(g, obj, depth + 1))
+
+        prop = next(g.objects(node, OWL_ON_PROPERTY), None)
+        filler = (next(g.objects(node, OWL_SOME), None) or
+                  next(g.objects(node, OWL_ALL), None) or
+                  next(g.objects(node, OWL_HAS_VALUE), None))
+        if prop and isinstance(prop, URIRef) and filler:
+            prop_label = RDFProcessor.pick_label(g, prop)
+            if isinstance(filler, URIRef):
+                filler_label = RDFProcessor.pick_label(g, filler)
+                values.append(f"{prop_label} {filler_label}")
+
         return values
 
     @staticmethod
@@ -168,13 +184,6 @@ class RDFProcessor:
     def extract_entity_context(g: Graph, entity: URIRef) -> Dict:
         """
         Извлекает контекст сущности с раздельным хранением по языкам.
-
-        Возвращает словарь с полями:
-        - uri, label (основной, для совместимости)
-        - label_ru, label_en
-        - types, types_ru, types_en
-        - properties, properties_ru, properties_en
-        - incoming
         """
         labels = RDFProcessor.pick_labels_both(g, entity)
         label = labels.get("ru") or labels.get("en", "")
@@ -215,13 +224,22 @@ class RDFProcessor:
                     seen_types.add(super_label)
                     types.append(super_label)
 
-        # --- Свойства (раздельно по языкам) ---
         properties: Dict[str, List[str]] = {}
         properties_ru: Dict[str, List[str]] = {}
         properties_en: Dict[str, List[str]] = {}
 
+        for sc in g.objects(entity, RDFS.subClassOf):
+            if isinstance(sc, BNode):
+                restriction_vals = RDFProcessor._resolve_bnode(g, sc)
+                for val in restriction_vals:
+                    properties.setdefault("restriction", []).append(val)
+                    properties_ru.setdefault("restriction", []).append(val)
+                    properties_en.setdefault("restriction", []).append(val)
+
         for p, o in g.predicate_objects(entity):
             if p in RDFProcessor.SKIP_PREDICATES:
+                continue
+            if p == RDFS.subClassOf:
                 continue
 
             pred_label = RDFProcessor.pick_label(g, p)
@@ -236,9 +254,9 @@ class RDFProcessor:
                 if val:
                     properties.setdefault(pred_label, []).append(val)
                     # Распределяем по языкам
-                    if isinstance(o, Literal) and o.language == "ru":
+                    if o.language == "ru":
                         properties_ru.setdefault(pred_label_ru, []).append(val)
-                    elif isinstance(o, Literal) and o.language == "en":
+                    elif o.language == "en":
                         properties_en.setdefault(pred_label_en, []).append(val)
                     else:
                         # Без языка — в оба
@@ -272,12 +290,12 @@ class RDFProcessor:
         # --- Входящие ссылки ---
         incoming: List[str] = []
         for s, p in islice(
-            (
-                (s, p)
-                for s, p in g.subject_predicates(entity)
-                if p not in RDFProcessor.SKIP_PREDICATES
-            ),
-            _MAX_INCOMING,
+                (
+                        (s, p)
+                        for s, p in g.subject_predicates(entity)
+                        if p not in RDFProcessor.SKIP_PREDICATES
+                ),
+                _MAX_INCOMING,
         ):
             subj_label = RDFProcessor.pick_label(g, s)
             pred_label = RDFProcessor.pick_label(g, p)
@@ -360,3 +378,76 @@ class RDFProcessor:
             ref_prefix = "Ссылаются" if lang == "ru" else "Referenced by"
             lines.append(f"  ← {ref_prefix}: {', '.join(ctx['incoming'][:3])}")
         return "\n".join(lines)
+
+
+def _has_content(
+        g: Graph,
+        entity: URIRef,
+        skip_predicates: set,
+) -> bool:
+    for t in g.objects(entity, RDF.type):
+        if isinstance(t, URIRef):
+            local = str(t).split("#")[-1] if "#" in str(t) else str(t).split("/")[-1]
+            if local not in RDFProcessor.SKIP_TYPES:
+                return True
+    for p, o in g.predicate_objects(entity):
+        if p not in skip_predicates and p != RDF.type:
+            return True
+    return False
+
+def get_neighbors(
+        g: Graph,
+        entity: URIRef,
+        max_depth: int = 2,
+        max_per_step: int = 5,
+        skip_predicates: Optional[set] = None,
+) -> List[Dict]:
+    if skip_predicates is None:
+        skip_predicates = {RDF.type, RDFS.label, OWL.sameAs, RDFS.subClassOf}
+
+    visited: set = {entity}
+    queue: deque = deque()
+    queue.append((entity, 0))
+    neighbors: List[Dict] = []
+
+    while queue:
+        current, depth = queue.popleft()
+        if depth >= max_depth:
+            continue
+
+        next_depth = depth + 1
+        step_count = 0
+
+        for pred, obj in g.predicate_objects(current):
+            if step_count >= max_per_step:
+                break
+            if pred in skip_predicates:
+                continue
+            if not isinstance(obj, URIRef) or isinstance(obj, BNode):
+                continue
+            if obj in visited:
+                continue
+            visited.add(obj)
+            if _has_content(g, obj, skip_predicates):
+                neighbors.append({"uri": obj, "depth": next_depth})
+                queue.append((obj, next_depth))
+                step_count += 1
+
+        for subj, pred in g.subject_predicates(current):
+            if step_count >= max_per_step:
+                break
+            if pred in skip_predicates:
+                continue
+            if not isinstance(subj, URIRef) or isinstance(subj, BNode):
+                continue
+            if subj in visited:
+                continue
+            visited.add(subj)
+            if _has_content(g, subj, skip_predicates):
+                neighbors.append({"uri": subj, "depth": next_depth})
+                queue.append((subj, next_depth))
+                step_count += 1
+
+    neighbors.sort(key=lambda x: x["depth"])
+    return neighbors
+

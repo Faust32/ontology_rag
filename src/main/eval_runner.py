@@ -5,7 +5,7 @@ from pathlib import Path
 PYTHON_EXE = "/Users/i.a.babushkin/PycharmProjects/pythonProject/.venv/bin/python"
 EVAL_SCRIPT = "src/main/eval.py"
 PROJECT_ROOT = Path("/Users/i.a.babushkin/PycharmProjects/ontology_rag")
-BENCHMARK_DIR = PROJECT_ROOT / "src/benchmark"
+BENCHMARK_DIR = PROJECT_ROOT / "src/benchmark/graph"
 RESOURCES_DIR = PROJECT_ROOT / "resources"
 
 # Файлы индексов, которые нужно чистить при смене эмбеддинг-модели
@@ -16,23 +16,23 @@ INDEX_FILES = [
 ]
 
 # --- Конфигурация матриц тестирования ---
-LANGUAGES = ["en", "ru"]
+LANGUAGES = ["en"]
 
 EMBED_MODELS = {
     "bge-m3": "bge-m3:latest",
-    "mxbai-embed": "mxbai-embed-large:latest",
-    "nomic-embed": "nomic-embed-text:latest"
+    # "mxbai-embed": "mxbai-embed-large:latest",
+    # "nomic-embed": "nomic-embed-text:latest"
 }
 
 LLM_MODELS = {
-    "deepseek-r1": "deepseek-r1:8b",
+    # "deepseek-r1": "deepseek-r1:8b",
     "llama-8b": "llama3:8b",
-    "microsoft-phi4": "phi4-mini:latest",
-    "mistral-7b": "mistral:7b",
-    "qwen3-8b": "qwen3:8b"
+    # "microsoft-phi4": "phi4-mini:latest",
+    # "mistral-7b": "mistral:7b",
+    # "qwen3-8b": "qwen3:8b"
 }
 
-THRESHOLDS = [0.5, 0.6, 0.65, 0.7]
+THRESHOLDS = [0.6]
 
 
 def clean_indices():

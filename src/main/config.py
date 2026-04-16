@@ -9,28 +9,28 @@ RESOURCES_DIR = PROJECT_ROOT / "ontology_rag/resources"
 
 def build_config() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Ontology-RAG CLI")
-    parser.add_argument("--ontology", default=str(RESOURCES_DIR / "BehaviorChoiceDeterminantsOntology.ttl"))
+    parser.add_argument("--ontology", default=str(RESOURCES_DIR / "ontology.ttl"))
     parser.add_argument("--index", default=str(RESOURCES_DIR / "ontology_index.pkl"))
     parser.add_argument("--llm-host", default="http://localhost:11434")
     parser.add_argument("--llm-model", default="llama3:8b")
     parser.add_argument("--embed-model", default="nomic-embed-text")
     parser.add_argument("--top-k", type=int, default=8)
     parser.add_argument("--chunk-size", type=int, default=16)
-    parser.add_argument("--score-threshold", type=float, default=0.55)
+    parser.add_argument("--score-threshold", type=float, default=0.6)
     parser.add_argument("--embed-delay", type=float, default=0.2)
     parser.add_argument("--embed-workers", type=int, default=1,
                         help="Parallel workers for embedding requests")
     parser.add_argument("--index-version", type=int, default=3)
-    parser.add_argument("--lang-index", type=str, default=None,
+    parser.add_argument("--lang-index", type=str, default="en",
                         choices=["ru", "en"],
                         help="Load only the specified language index (ru or en). "
-                             "If not set, both indices are loaded.")
+                             "If not set, en index is loaded.")
     args, _ = parser.parse_known_args()
     return args
 
 
 class Config:
-    INDEX_SCHEMA_VERSION = 3  # было 2, стало 3 для билингвального индекса
+    INDEX_SCHEMA_VERSION = 5  # add graph in cache and fix owl format indexing
 
     def __init__(self, args: Optional[argparse.Namespace] = None):
         if args is None:

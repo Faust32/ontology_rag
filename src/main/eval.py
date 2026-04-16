@@ -458,32 +458,40 @@ def _extract_local_name(uri: str) -> str:
 
 
 def _uri_matches(uri: str, pattern: str) -> bool:
-    uri_lower = _normalize(uri)
+    local_name = _extract_local_name(uri)
+    local_lower = _normalize(local_name)
     pattern_lower = _normalize(pattern)
 
-    if pattern_lower in uri_lower:
+    # Для коротких паттернов (1-2 символа) — только точное совпадение local name
+    if len(pattern_lower) <= 2:
+        return local_lower == pattern_lower
+
+    # Точное совпадение local name
+    if pattern_lower == local_lower:
         return True
 
-    local_name = _normalize(_extract_local_name(uri))
-    if pattern_lower == local_name or pattern_lower in local_name:
-        return True
+    # Для паттернов 3+ символов — проверяем вхождение, но только в local name
+    # (не в полном URI, чтобы избежать ложных срабатываний на namespace)
 
-    pattern_variants = [
+    # Нормализуем варианты
+    pattern_variants = {
         pattern_lower,
         pattern_lower.replace('_', ''),
         pattern_lower.replace(' ', ''),
         pattern_lower.replace('-', ''),
-    ]
-    local_variants = [
-        local_name,
-        local_name.replace('_', ''),
-        local_name.replace(' ', ''),
-        local_name.replace('-', ''),
-    ]
+    }
+    local_variants = {
+        local_lower,
+        local_lower.replace('_', ''),
+        local_lower.replace(' ', ''),
+        local_lower.replace('-', ''),
+    }
 
     for pv in pattern_variants:
         for lv in local_variants:
-            if pv in lv or lv in pv:
+            # Проверяем что паттерн содержится в local name
+            # НО НЕ наоборот (чтобы "SQL" не матчил "C")
+            if pv in lv:
                 return True
 
     return False
@@ -500,7 +508,7 @@ def _any_match(uri: str, patterns: List[str]) -> Tuple[bool, Optional[str]]:
 # Вычисление метрик
 # ---------------------------------------------------------------------------
 
-def compute_retrieval_metrics(result: CaseResult) -> None:
+def compute_retrieval_metrics(result: CaseResult, k: int = 8) -> None:
     expected = result.expected_uris
     retrieved = result.retrieved_uris
 
@@ -513,7 +521,7 @@ def compute_retrieval_metrics(result: CaseResult) -> None:
     if not expected:
         result.hit = len(retrieved) == 0
         result.precision = 1.0 if len(retrieved) == 0 else 0.0
-        result.recall = 1.0
+        result.recall = 1.0 if len(retrieved) == 0 else 0.0
         result.reciprocal_rank = 0.0
         result.match_details["unmatched_retrieved"] = list(retrieved)
         return
@@ -539,9 +547,15 @@ def compute_retrieval_metrics(result: CaseResult) -> None:
 
     result.hit = any(matched_flags)
     n_relevant_retrieved = sum(matched_flags)
-    result.precision = n_relevant_retrieved / len(retrieved) if retrieved else 0.0
+
+    # Precision@k — знаменатель = k (фиксированный)
+    result.precision = n_relevant_retrieved / k
+
+    # Recall@k
     result.recall = len(found_patterns) / len(expected)
 
+    # MRR
+    result.reciprocal_rank = 0.0
     for rank, matched in enumerate(matched_flags, start=1):
         if matched:
             result.reciprocal_rank = 1.0 / rank
@@ -554,13 +568,30 @@ def compute_generation_metrics(result: CaseResult) -> None:
 
     answer_lower = result.answer.lower()
 
+    # Переименовано логически: это substring/containment match, не exact match
     if result.expected_answer is not None:
         result.exact_match = result.expected_answer.lower() in answer_lower
 
+    # Adherence: улучшенная токенизация
     context_lower = " ".join(result.retrieved_texts).lower()
-    words = re.findall(r"[а-яёa-z]{4,}", answer_lower)
+
+    # Включаем слова с цифрами и аббревиатуры (SQL, RDF, 1972)
+    words = re.findall(r"[а-яёa-z0-9]{2,}", answer_lower)
+
     if words and context_lower:
-        coverage = sum(1 for w in words if w in context_lower) / len(words)
+        # Проверяем как целое слово через word boundaries, а не подстроку
+        covered = 0
+        for w in words:
+            # Для коротких слов (2-3 символа) — точное вхождение как слово
+            if len(w) <= 3:
+                pattern = r'\b' + re.escape(w) + r'\b'
+                if re.search(pattern, context_lower):
+                    covered += 1
+            else:
+                if w in context_lower:
+                    covered += 1
+
+        coverage = covered / len(words)
         result.adherence = coverage >= 0.7
     else:
         result.adherence = None
@@ -742,7 +773,6 @@ def parse_eval_args() -> argparse.Namespace:
 # ---------------------------------------------------------------------------
 # Основной цикл
 # ---------------------------------------------------------------------------
-
 def run_eval(
         top_k: int,
         language: str,
@@ -755,77 +785,76 @@ def run_eval(
         from config import Config
         from knowledge_base import KnowledgeBase
         from llm_client import LLMClient
+        from rag_app import RAGApp
     except ImportError as e:
         print(f"❌ Не удалось импортировать модули проекта: {e}")
         print("   Запускайте eval.py из той же директории, что и rag_app.py")
         sys.exit(1)
 
-    # Выбираем тестовые кейсы в зависимости от языка
     if language == "ru":
         test_cases = TEST_CASES_RU
         lang_label = "Russian"
     elif language == "en":
         test_cases = TEST_CASES_EN
         lang_label = "English"
-    else:  # both
+    else:
         test_cases = TEST_CASES_RU + TEST_CASES_EN
         lang_label = "Both (RU+EN)"
 
     print(f"🔧 Инициализация системы…")
     print(f"🌐 Язык тестов: {lang_label}")
-    cfg = Config()
-    cfg.top_k = top_k
-    kb = KnowledgeBase(cfg)
-    llm = LLMClient(cfg) if not skip_generation else None
+
+    # Используем RAGApp вместо отдельных kb + llm
+    app = RAGApp()
+    app.cfg.top_k = top_k
 
     results: List[CaseResult] = []
     start = time.time()
 
     for i, case in enumerate(test_cases, 1):
-        # print(f"\r⏳ Кейс {i}/{len(test_cases)}: {case['query'][:50]!r}", end="", flush=True)
+        # Используем полный pipeline через RAGApp
+        answer, retrieved, status = app.answer_question(case["query"])
 
-        retrieved, status = kb.search(case["query"], top_k=top_k)
-
-        retrieved_uris = [e["uri"] for e, _ in retrieved]
-        retrieved_scores = [s for _, s in retrieved]
-        retrieved_texts = [
+        # Полный список (FAISS + соседи) — для генерации и adherence
+        all_uris = [e["uri"] for e, _ in retrieved]
+        all_scores = [s for _, s in retrieved]
+        all_texts = [
             " ".join([e["label"]] + [v for vals in e.get("properties", {}).values() for v in vals])
             for e, _ in retrieved
         ]
+
+        # Precision@k считаем только по первым top_k (FAISS-часть),
+        # чтобы соседи из графового обогащения не раздували знаменатель
+        retrieved_uris = all_uris[:top_k]
+        retrieved_scores = all_scores[:top_k]
 
         cr = CaseResult(
             query=case["query"],
             expected_uris=case["expected_uris"],
             retrieved_uris=retrieved_uris,
             retrieved_scores=retrieved_scores,
-            retrieved_texts=retrieved_texts,
+            retrieved_texts=all_texts,  # полный контекст для adherence
             status=status,
             expected_answer=case.get("expected_answer"),
         )
 
-        compute_retrieval_metrics(cr)
+        compute_retrieval_metrics(cr, k=top_k)
 
-        if llm is not None and retrieved:
-            system = llm.build_system_prompt(retrieved)
-            cr.answer = llm.call(system=system, user=case["query"])
+        if not skip_generation and answer and not answer.startswith("❌") and not answer.startswith("😕"):
+            cr.answer = answer
             compute_generation_metrics(cr)
 
         results.append(cr)
-        #print_case(cr, verbose, debug_failures)
 
     elapsed = time.time() - start
 
-    #if debug_failures:
-        #print_failure_summary(results)
-
     agg = aggregate(results, language=lang_label)
-    #print_summary(agg, elapsed)
 
     if output_json:
         if not output_json.is_absolute():
             from config import PROJECT_ROOT
             output_json = PROJECT_ROOT / output_json
-        output_json.parent.mkdir(parents=True, exist_ok=True)  # создаём папки
+        output_json.parent.mkdir(parents=True, exist_ok=True)
         payload = {
             "summary": agg,
             "elapsed_s": round(elapsed, 2),
