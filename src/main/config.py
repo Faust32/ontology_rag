@@ -9,7 +9,7 @@ RESOURCES_DIR = PROJECT_ROOT / "ontology_rag/resources"
 
 def build_config() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Ontology-RAG CLI")
-    parser.add_argument("--ontology", default=str(RESOURCES_DIR / "ontology.ttl"))
+    parser.add_argument("--ontology", default=str(RESOURCES_DIR / "cvdo.owl"))
     parser.add_argument("--index", default=str(RESOURCES_DIR / "ontology_index.pkl"))
     parser.add_argument("--llm-host", default="http://localhost:11434")
     parser.add_argument("--llm-model", default="llama3:8b")

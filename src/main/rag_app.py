@@ -248,6 +248,46 @@ class RAGApp:
                 ref_prefix = "Ссылаются" if lang == "ru" else "Referenced by"
                 print(f"    ← {ref_prefix}: {refs}")
 
+    def _describe_ontology(self) -> str:
+        """
+        Сэмплирует сущности из индекса и просит LLM описать онтологию.
+        Вызывается один раз при запуске.
+        """
+        import random
+
+        entities = self.kb.entities
+        if not entities:
+            return "Индекс пуст."
+
+        # Берём случайную выборку — достаточно для общего описания
+        sample_size = min(60, len(entities))
+        sample = random.sample(entities, sample_size)
+
+        # Собираем компактный контекст: только label + types
+        lines = []
+        for e in sample:
+            label = e.get("label_en") or e.get("label", "")
+            types = e.get("types_en") or e.get("types", [])
+            type_str = f" [{', '.join(types[:2])}]" if types else ""
+            lines.append(f"- {label}{type_str}")
+
+        context = "\n".join(lines)
+        total = len(entities)
+
+        system = (
+            "You are an ontology analyst. "
+            "The user will give you a sample of entities from a knowledge base. "
+            "Your task: in 4-6 sentences, describe what this ontology is about, "
+            "what its main topics and sections are, and what kinds of entities it contains. "
+            "Be specific and concise. Do not list entities — synthesize."
+        )
+        user = (
+            f"Here is a random sample of {sample_size} entities out of {total} total "
+            f"from the knowledge base:\n\n{context}\n\n"
+            "Describe this ontology briefly."
+        )
+
+        return self.llm.call(system=system, user=user)
     # ------------------------------------------------------------------
     # Основной цикл
     # ------------------------------------------------------------------
@@ -263,6 +303,13 @@ class RAGApp:
         print(f"📐 Threshold: {self.cfg.score_threshold}")
         print(f"🔗 Graph    : {'loaded' if self.kb.graph else 'not available'}")
         print("=" * 70)
+        print("\n📖 Анализирую онтологию…")
+        description = self._describe_ontology()
+        print("\n" + "─" * 70)
+        print("📖 ОБ ЭТОЙ ОНТОЛОГИИ:")
+        print("─" * 70)
+        print(description)
+        print("─" * 70 + "\n")
         print("Введите вопрос (или 'exit' для выхода)\n")
 
         while True:
