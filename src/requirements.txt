@@ -1,0 +1,6 @@
+faiss
+numpy
+requests
+rdflib
+tqdm
+dotenv
