@@ -1,6 +1,6 @@
-faiss
+faiss-cpu
 numpy
 requests
 rdflib
 tqdm
-dotenv
+python-dotenv
