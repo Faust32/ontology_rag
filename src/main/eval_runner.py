@@ -36,7 +36,7 @@ THRESHOLDS = [0.6]
 
 
 def clean_indices():
-    """Удаляет файлы индекса перед сменой модели эмбеддингов."""
+    # Удаляем файлы индекса перед сменой модели эмбеддингов
     print("\n🧹 Очистка старых индексов...")
     for file_name in INDEX_FILES:
         file_path = RESOURCES_DIR / file_name

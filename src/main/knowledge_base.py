@@ -244,8 +244,6 @@ class KnowledgeBase:
                 "Skipping %d texts due to embedding failures in %s index",
                 len(all_failed), lang_label,
             )
-            # Для упрощения не удаляем — заполняем нулями (FAISS отфильтрует по score)
-            # В production лучше синхронизировать удаление между индексами
 
         if not all_vectors:
             raise RuntimeError(f"All embedding batches failed for {lang_label}")
@@ -441,7 +439,6 @@ class KnowledgeBase:
         if not self.entities:
             return [], "index_empty"
 
-        # Определяем язык запроса
         lang = detect_lang(query)
 
         # Выбираем индекс

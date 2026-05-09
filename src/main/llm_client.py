@@ -18,17 +18,6 @@ class LLMClient:
         user: str,
         temperature: float = 0.1,
     ) -> str:
-        """
-        ИСПРАВЛЕНИЕ #6: Используем API /api/chat с role-based messages
-        вместо сырого /api/generate + ручной сборки промпта.
-
-        Почему это важно:
-        - Ollama сама применяет правильный шаблон модели
-          (Llama-3 chat tokens, ChatML и т.д.) — не нужно хардкодить.
-        - Модель чётко разделяет инструкции (system) и данные (user),
-          что снижает риск prompt injection через содержимое онтологии.
-        - При обновлении модели шаблон меняется автоматически.
-        """
         url = f"{self.cfg.ollama_base}/api/chat"
         payload = {
             "model": self.cfg.llm_model,

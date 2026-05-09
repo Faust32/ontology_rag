@@ -568,11 +568,9 @@ def compute_generation_metrics(result: CaseResult) -> None:
 
     answer_lower = result.answer.lower()
 
-    # Переименовано логически: это substring/containment match, не exact match
     if result.expected_answer is not None:
         result.exact_match = result.expected_answer.lower() in answer_lower
 
-    # Adherence: улучшенная токенизация
     context_lower = " ".join(result.retrieved_texts).lower()
 
     # Включаем слова с цифрами и аббревиатуры (SQL, RDF, 1972)
@@ -639,7 +637,6 @@ def print_case(r: CaseResult, verbose: bool, debug_failures: bool) -> None:
     status_icon = "✅" if r.hit else "❌"
     print(f"\n{status_icon} [{r.status}] {r.query!r}")
 
-    # === ДЕБАГ: всегда показываем для провалившихся кейсов ===
     if not r.hit and r.expected_uris:
         print(f"   🔍 RETRIEVAL FAILED:")
         print(f"   ├─ Expected: {r.expected_uris}")
@@ -648,7 +645,6 @@ def print_case(r: CaseResult, verbose: bool, debug_failures: bool) -> None:
             local = _extract_local_name(uri)
             print(f"   │  {i + 1}. [{score:.3f}] local='{local}' | full='{uri}'")
 
-        # Проверяем матчинг вручную
         print(f"   ├─ Manual match check:")
         for pattern in r.expected_uris:
             print(f"   │  Pattern '{pattern}':")
@@ -657,7 +653,6 @@ def print_case(r: CaseResult, verbose: bool, debug_failures: bool) -> None:
                 matched = _uri_matches(uri, pattern)
                 print(f"   │    vs '{local}': {matched}")
 
-    # === ДЕБАГ: generation metrics ===
     if r.expected_answer is not None and r.answer is not None:
         answer_lower = r.answer.lower()
         expected_lower = r.expected_answer.lower()
@@ -804,7 +799,6 @@ def run_eval(
     print(f"🔧 Инициализация системы…")
     print(f"🌐 Язык тестов: {lang_label}")
 
-    # Используем RAGApp вместо отдельных kb + llm
     app = RAGApp()
     app.cfg.top_k = top_k
 
@@ -812,10 +806,8 @@ def run_eval(
     start = time.time()
 
     for i, case in enumerate(test_cases, 1):
-        # Используем полный pipeline через RAGApp
         answer, retrieved, status = app.answer_question(case["query"])
 
-        # Полный список (FAISS + соседи) — для генерации и adherence
         all_uris = [e["uri"] for e, _ in retrieved]
         all_scores = [s for _, s in retrieved]
         all_texts = [
@@ -833,7 +825,7 @@ def run_eval(
             expected_uris=case["expected_uris"],
             retrieved_uris=retrieved_uris,
             retrieved_scores=retrieved_scores,
-            retrieved_texts=all_texts,  # полный контекст для adherence
+            retrieved_texts=all_texts,
             status=status,
             expected_answer=case.get("expected_answer"),
         )
