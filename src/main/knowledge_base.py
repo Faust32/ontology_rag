@@ -81,8 +81,8 @@ class KnowledgeBase:
     # ------------------------------------------------------------------
 
     def _get_embedding_single(self, text: str) -> Optional[np.ndarray]:
-        url = f"{self.cfg.ollama_base}/api/embeddings"
-        payload = {"model": self.cfg.embed_model, "prompt": text}
+        url = f"{self.cfg.ollama_base}/api/embed"
+        payload = {"model": self.cfg.embed_model, "input": text}
         for attempt in range(3):
             try:
                 resp = requests.post(url, json=payload, timeout=120)
@@ -189,17 +189,17 @@ class KnowledgeBase:
             text: str,
             timeout: int = 240,
     ) -> Optional[np.ndarray]:
-        url = f"{self.cfg.ollama_base}/api/embeddings"
-        payload = {"model": self.cfg.embed_model, "prompt": text}
+        url = f"{self.cfg.ollama_base}/api/embed"
+        payload = {"model": self.cfg.embed_model, "input": text}
         for attempt in range(5):
             try:
                 resp = requests.post(url, json=payload, timeout=timeout)
                 resp.raise_for_status()
                 data = resp.json()
-                if not data.get("embedding"):
+                if not data.get("embeddings"):
                     logger.warning("Empty embedding on extended attempt %d", attempt + 1)
                     continue
-                return np.array(data["embedding"], dtype="float32")
+                return np.array(data["embedding"][0], dtype="float32")
             except Exception as exc:
                 wait = min(2 ** attempt, 30)
                 logger.warning(

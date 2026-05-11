@@ -59,15 +59,23 @@ EMBED_WORKERS=1
 Убедитесь, что Ollama установлена и запущена:
 
 ```bash
-# Установка (macOS)
+# Установка 
+
+# (macOS)
 brew install ollama
+
+# (windows)
+irm https://ollama.com/install.ps1 | iex
+
+# (linux)
+curl -fsSL https://ollama.com/install.sh | sh
 
 # Запуск сервера
 ollama serve
 
 # Pull моделей
 ollama pull llama3:8b
-ollama pull nomic-embed-text
+ollama pull bge-m3
 ```
 
 ## Запуск
