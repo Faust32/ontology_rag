@@ -87,7 +87,7 @@ class KnowledgeBase:
             try:
                 resp = requests.post(url, json=payload, timeout=120)
                 resp.raise_for_status()
-                return np.array(resp.json()["embedding"], dtype="float32")
+                return np.array(resp.json()["embeddings"][0], dtype="float32")
             except Exception as exc:
                 logger.warning("Embedding attempt %d/3 failed: %s", attempt + 1, exc)
                 if attempt < 2:
@@ -199,7 +199,7 @@ class KnowledgeBase:
                 if not data.get("embeddings"):
                     logger.warning("Empty embedding on extended attempt %d", attempt + 1)
                     continue
-                return np.array(data["embedding"][0], dtype="float32")
+                return np.array(data["embeddings"][0], dtype="float32")
             except Exception as exc:
                 wait = min(2 ** attempt, 30)
                 logger.warning(
