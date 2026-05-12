@@ -9,6 +9,7 @@ from rdflib import URIRef
 from config import Config
 from knowledge_base import KnowledgeBase, detect_lang
 from llm_client import LLMClient
+from llm_client_ya import LLMClientYa
 from rdf_processor import RDFProcessor, get_neighbors
 
 logger = logging.getLogger(__name__)
@@ -18,7 +19,10 @@ class RAGApp:
     def __init__(self):
         self.cfg = Config()
         self.kb = KnowledgeBase(self.cfg)
-        self.llm = LLMClient(self.cfg)
+        if self.cfg.llm_backend == "yandex":
+            self.llm = LLMClientYa(self.cfg)
+        else:
+            self.llm = LLMClient(self.cfg)
 
         # Индекс URI → позиция в self.kb.entities для быстрого поиска
         self._uri_to_idx: Dict[str, int] = {

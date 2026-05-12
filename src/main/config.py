@@ -13,7 +13,7 @@ def build_config() -> argparse.Namespace:
     parser.add_argument("--index", default=str(RESOURCES_DIR / "ontology_index.pkl"))
     parser.add_argument("--llm-host", default="http://localhost:11434")
     parser.add_argument("--llm-model", default="llama3:8b")
-    parser.add_argument("--embed-model", default="nomic-embed-text")
+    parser.add_argument("--embed-model", default="bge-m3")
     parser.add_argument("--top-k", type=int, default=8)
     parser.add_argument("--chunk-size", type=int, default=16)
     parser.add_argument("--score-threshold", type=float, default=0.6)
@@ -25,6 +25,9 @@ def build_config() -> argparse.Namespace:
                         choices=["ru", "en"],
                         help="Load only the specified language index (ru or en). "
                              "If not set, en index is loaded.")
+    parser.add_argument("--llm-backend", type=str, default="ollama",
+                        choices=["ollama", "yandex"],
+                        help="LLM backend to use: ollama (default) or yandex")
     args, _ = parser.parse_known_args()
     return args
 
@@ -46,3 +49,4 @@ class Config:
         self.embed_delay = args.embed_delay
         self.embed_workers = args.embed_workers
         self.lang_index = getattr(args, 'lang_index', None)
+        self.llm_backend = getattr(args, 'llm_backend', 'ollama')

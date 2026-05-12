@@ -5,9 +5,11 @@
 - **Python 3.9+**
 - **FAISS** — векторный поиск (Facebook AI Similarity Search)
 - **Ollama** — локальная LLM (Llama 3, Mistral, Qwen и др.)
+- **Yandex Cloud AI** — облачная LLM через OpenAI-совместимый API (опционально)
 - **RDFLib** — работа с RDF/OWL онтологиями
 - **NumPy** — векторные вычисления
 - **Requests** — HTTP-запросы к API эмбеддингов
+- **openai** — Python SDK для Yandex Cloud AI (опционально)
 
 ## Установка
 
@@ -52,6 +54,11 @@ CHUNK_SIZE=16
 # Параметры эмбеддинга
 EMBED_DELAY=0.2
 EMBED_WORKERS=1
+
+# Yandex Cloud AI (только если используется --llm-backend yandex)
+YANDEX_CLOUD_API_KEY=your_api_key_here
+YANDEX_CLOUD_FOLDER=your_folder_id_here
+YANDEX_CLOUD_MODEL=qwen3.6-35b-a3b/latest
 ```
 
 ### 5. Установка Ollama
@@ -101,7 +108,8 @@ python main.py \
   --score-threshold 0.6 \
   --embed-delay 0.2 \
   --embed-workers 1 \
-  --lang-index en  # ru или en для выбора языка индекса
+  --lang-index en \
+  --llm-backend ollama  # ollama (по умолчанию) или yandex
 ```
 
 #### Описание параметров
@@ -119,6 +127,19 @@ python main.py \
 | `--embed-delay` | `0.2` | Задержка между запросами эмбеддингов (сек) |
 | `--embed-workers` | `1` | Количество параллельных воркеров |
 | `--lang-index` | `en` | Язык индекса (`ru` или `en`) |
+| `--llm-backend` | `ollama` | LLM-бэкенд: `ollama` или `yandex` |
+
+### Запуск с Yandex Cloud AI
+
+```bash
+export YANDEX_CLOUD_API_KEY="your_api_key_here"
+export YANDEX_CLOUD_FOLDER="your_folder_id_here"
+
+cd src/main
+python main.py --llm-backend yandex
+```
+
+Модель задаётся через переменную окружения `YANDEX_CLOUD_MODEL` (по умолчанию `qwen3.6-35b-a3b/latest`). Эмбеддинги по-прежнему считаются через Ollama.
 
 ## Структура проекта
 
@@ -129,7 +150,8 @@ ontology_rag/
 │   │   ├── main.py           # Точка входа
 │   │   ├── rag_app.py        # Основное приложение RAG
 │   │   ├── knowledge_base.py # База знаний и поиск
-│   │   ├── llm_client.py     # Клиент для LLM
+│   │   ├── llm_client.py     # Клиент для LLM (Ollama)
+│   │   ├── llm_client_ya.py  # Клиент для Yandex Cloud AI
 │   │   ├── rdf_processor.py  # Обработка RDF/OWL
 │   │   ├── eval.py           # Оценка качества
 │   │   ├── eval_runner.py    # Запуск оценки
@@ -160,7 +182,7 @@ python src/main/eval_runner.py \
 Результаты бенчмарков хранятся в `src/benchmark/prog_langs/` с разбивкой по:
 - Языку вопросов (en/ru)
 - Модели эмбеддингов (bge-m3, mxbai-embed, nomic-embed)
-- LLM (llama-8b, mistral-7b, qwen3-8b, microsoft-phi4, deepseek-r1)
+- LLM (llama-8b, mistral-7b, qwen3-8b, microsoft-phi4, deepseek-r1, qwen3-35b-yandex)
 - Порогу релевантности (0.5, 0.6, 0.65, 0.7)
 
 ## Конфигурация
@@ -186,6 +208,7 @@ python src/main/eval_runner.py \
 | Базовая | llama3:8b | nomic-embed-text |
 | Качество | qwen3:8b | bge-m3 |
 | Скорость | mistral-7b | mxbai-embed |
+| Облако | Yandex qwen3.6-35b (`--llm-backend yandex`) | bge-m3 |
 
 ## Разработка
 

@@ -25,11 +25,12 @@ EMBED_MODELS = {
 }
 
 LLM_MODELS = {
-    # "deepseek-r1": "deepseek-r1:8b",
-    "llama-8b": "llama3:8b",
-    # "microsoft-phi4": "phi4-mini:latest",
-    # "mistral-7b": "mistral:7b",
-    # "qwen3-8b": "qwen3:8b"
+    # "deepseek-r1": {"model": "deepseek-r1:8b", "backend": "ollama"},
+    "llama-8b": {"model": "llama3:8b", "backend": "ollama"},
+    # "microsoft-phi4": {"model": "phi4-mini:latest", "backend": "ollama"},
+    # "mistral-7b": {"model": "mistral:7b", "backend": "ollama"},
+    # "qwen3-8b": {"model": "qwen3:8b", "backend": "ollama"},
+    # "qwen3-35b-yandex": {"model": "qwen3.6-35b-a3b/latest", "backend": "yandex"},
 }
 
 THRESHOLDS = [0.6]
@@ -97,7 +98,7 @@ def main():
             continue
 
         for lang in LANGUAGES:
-            for llm_folder, llm_model in LLM_MODELS.items():
+            for llm_folder, llm_cfg in LLM_MODELS.items():
                 for thr in THRESHOLDS:
                     output_dir = BENCHMARK_DIR / lang / embed_folder / llm_folder
                     output_dir.mkdir(parents=True, exist_ok=True)
@@ -111,12 +112,16 @@ def main():
                         total_skipped += 1
                         continue
 
+                    llm_model = llm_cfg["model"]
+                    llm_backend = llm_cfg.get("backend", "ollama")
+
                     cmd = [
                         PYTHON_EXE, str(PROJECT_ROOT / EVAL_SCRIPT),
                         "--language", lang,
                         "--lang-index", lang,
                         "--embed-model", embed_model,
                         "--llm-model", llm_model,
+                        "--llm-backend", llm_backend,
                         "--score-threshold", str(thr),
                         "--output-json", str(output_file)
                     ]
