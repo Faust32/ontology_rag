@@ -8,7 +8,7 @@ from config import Config
 
 logger = logging.getLogger(__name__)
 
-YANDEX_CLOUD_FOLDER = os.getenv("YANDEX_CLOUD_FOLDER", "b1g1gk23e33479u6qi0c")
+YANDEX_CLOUD_FOLDER = os.getenv("YANDEX_CLOUD_FOLDER", "")
 YANDEX_CLOUD_API_KEY = os.getenv("YANDEX_CLOUD_API_KEY", "")
 YANDEX_CLOUD_MODEL = os.getenv("YANDEX_CLOUD_MODEL", "qwen3.6-35b-a3b/latest")
 
@@ -22,7 +22,7 @@ class LLMClientYa:
         self._client = openai.OpenAI(
             api_key=api_key,
             base_url="https://ai.api.cloud.yandex.net/v1",
-            project=YANDEX_CLOUD_FOLDER,
+            default_headers={"x-folder-id": YANDEX_CLOUD_FOLDER},
         )
         self._model = f"gpt://{YANDEX_CLOUD_FOLDER}/{YANDEX_CLOUD_MODEL}"
 
@@ -33,14 +33,15 @@ class LLMClientYa:
         temperature: float = 0.1,
     ) -> str:
         try:
-            response = self._client.responses.create(
+            response = self._client.chat.completions.create(
                 model=self._model,
                 temperature=temperature,
-                instructions=system,
-                input=user,
-                max_output_tokens=500,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user}
+                ]
             )
-            return response.output_text.strip()
+            return response.choices[0].message.content.strip()
         except Exception as exc:
             logger.error("Yandex Cloud LLM call failed: %s", exc)
             return f"[Ошибка генерации: {exc}]"
